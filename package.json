@@ -1,0 +1,35 @@
+{
+  "name": "najax",
+  "description": "A lightweight wrapper for the nodejs http request object to enable jquery ajax style serverside requests in nodejs",
+  "version": "0.1.0",
+  "homepage": "https://github.com/alanclarke/najax",
+  "author": {
+    "name": "Alan Clarke",
+    "email": "self@alz.so",
+    "url": "alz.so"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:alanclarke/najax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alanclarke/najax/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/alanclarke/najax/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "lib/najax",
+  "engines": {
+    "node": ">= 0.6.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "devDependencies": {
+    "grunt": "~0.3.11"
+  },
+  "keywords": []
+}
