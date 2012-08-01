@@ -7,7 +7,12 @@ Install the module with: `npm install najax`
 
 ```javascript
 var najax = require('najax');
-najax.awesome(); // "awesome"
+najax('http://www.google.com', function(html){ console.log(html); }); // "awesome"
+najax('http://www.google.com', { type:'POST' }, function(html){ console.log(html); }); // "awesome"
+najax({ url:'http://www.google.com', type:'POST', success: function(html){ console.log(html); }); // "awesome"
+najax({ url:'http://www.google.com', type:'POST').success(function(resp){}).error(function(err){}); // "awesome"
+
+najax.get, najax.post, najax.put, najax.delete...
 ```
 
 ## Documentation
