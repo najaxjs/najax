@@ -1,8 +1,14 @@
 # najax
 
-A lightweight wrapper for the nodejs http request object to enable jquery ajax style serverside requests in nodejs.
+jQuery ajax is stupid simple.
 
-the x is a lie.
+This project provides a lightweight wrapper for the nodejs http request object that enables jquery ajax style syntax when making serverside requests to other webpages in node.js
+
+It features very flexible method overloads to suit various styles, including with jquery style deferreds.
+
+It seamlessly handles ssl and makes some reasonable assumptions based on inputs but as usual everything can be overridden by passing an options object.
+
+The x is a lie.
 
 ## Getting Started
 Install the module with: `npm install najax`
@@ -17,8 +23,11 @@ najax({ url:'http://www.google.com', type:'POST' }).success(function(resp){}).er
 najax.get, najax.post, najax.put, najax.delete...
 ```
 
-## Documentation
-_(Coming soon)_
+## Run unit tests
+cd dir
+npm -g install grunt
+npm install
+grunt test
 
 ## Examples
 _(Coming soon)_
@@ -26,8 +35,6 @@ _(Coming soon)_
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [grunt](https://github.com/cowboy/grunt).
 
-## Release History
-_(Nothing yet)_
 
 ## License
 Copyright (c) 2012 Alan Clarke  
