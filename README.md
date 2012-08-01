@@ -24,10 +24,10 @@ najax.get, najax.post, najax.put, najax.delete...
 ```
 
 ## Run unit tests
- -cd dir
- -npm -g install grunt
- -npm install
- -grunt test
+- cd dir
+- npm -g install grunt
+- npm install
+- grunt test
 
 ## Examples
 _(Coming soon)_
