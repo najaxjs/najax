@@ -10,7 +10,7 @@ var najax = require('najax');
 najax('http://www.google.com', function(html){ console.log(html); }); // "awesome"
 najax('http://www.google.com', { type:'POST' }, function(html){ console.log(html); }); // "awesome"
 najax({ url:'http://www.google.com', type:'POST', success: function(html){ console.log(html); }); // "awesome"
-najax({ url:'http://www.google.com', type:'POST').success(function(resp){}).error(function(err){}); // "awesome"
+najax({ url:'http://www.google.com', type:'POST' }).success(function(resp){}).error(function(err){}); // "awesome"
 
 najax.get, najax.post, najax.put, najax.delete...
 ```
