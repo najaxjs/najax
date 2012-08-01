@@ -1,6 +1,8 @@
 # najax
 
-A lightweight wrapper for the nodejs http request object to enable jquery ajax style serverside requests in nodejs
+A lightweight wrapper for the nodejs http request object to enable jquery ajax style serverside requests in nodejs.
+
+the x is a lie.
 
 ## Getting Started
 Install the module with: `npm install najax`
