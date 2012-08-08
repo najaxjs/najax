@@ -1,7 +1,7 @@
 {
   "name": "najax",
-  "description": "A lightweight wrapper for the nodejs http request object to enable jquery ajax style serverside requests in nodejs",
-  "version": "0.1.01",
+  "description": "fast, flexible, unit-tested jquery-ajax-stye serverside requests",
+  "version": "0.1.031",
   "homepage": "https://github.com/alanclarke/najax",
   "author": {
     "name": "Alan Clarke",
