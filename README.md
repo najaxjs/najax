@@ -1,14 +1,12 @@
 # najax
 
-jQuery ajax is stupid simple.
+Fast, flexible, unit-tested jquery-ajax-stye serverside requests.
 
-This project provides a lightweight wrapper for the nodejs http request object that enables jquery ajax style syntax when making serverside requests to other webpages in node.js
+jQuery ajax is stupid simple. This project provides a lightweight wrapper for the nodejs http request object that enables jquery ajax style syntax when making serverside requests to other webpages in node.js
 
 It features very flexible method overloads to suit various styles, including with jquery style deferreds.
 
 It seamlessly handles ssl and makes some reasonable assumptions based on inputs but as usual everything can be overridden by passing an options object.
-
-The x is a lie.
 
 ## Getting Started
 Install the module with: `npm install najax`
