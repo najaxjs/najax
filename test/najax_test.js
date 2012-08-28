@@ -95,7 +95,7 @@ exports['najax'] = {
       var headers = false;
 
       if(m!=='get'){
-        headers =  { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': 0 };
+        //headers =  { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': 0 };
       }
 
       //standard
@@ -143,18 +143,18 @@ exports['najax'] = {
 
     expected.path =  '/';
     expected.method =  'POST';
-    expected.headers =  { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': 3 };
+    expected.headers =  { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8', 'Content-Length': 4 };
     opts = najax.post('http://www.example.com', { data: data});
-    test.deepEqual( opts, [false, expected, 'a=1', false, false ], 'results should be get www.example.com:80, path = /');
+    test.deepEqual( opts, [false, expected, 'a=1\n', false, false ], 'results should be get www.example.com:80, path = /');
 
 
-    expected.headers =  { 'Content-Type': 'application/json', 'Content-Length': 7 };
+    expected.headers =  { 'Content-Type': 'application/json;charset=utf-8', 'Content-Length': 8 };
     opts = najax.post('http://www.example.com', { data: data, contentType:'json' });
-    test.deepEqual( opts, [false, expected, '{"a":1}', false, false ], 'results should be get www.example.com:80, path = /');
+    test.deepEqual( opts, [false, expected, '{"a":1}\n', false, false ], 'results should be get www.example.com:80, path = /');
 
-    expected.headers =  { 'Content-Type': 'application/xml', 'Content-Length': 7 };
+    expected.headers =  { 'Content-Type': 'application/xml;charset=utf-8', 'Content-Length': 8 };
     opts = najax.post('http://www.example.com', { data: JSON.stringify(data), contentType:'xml' });
-    test.deepEqual( opts, [false, expected, '{"a":1}', false, false ], 'results should be get www.example.com:80, path = /');
+    test.deepEqual( opts, [false, expected, '{"a":1}\n', false, false ], 'results should be get www.example.com:80, path = /');
     
 
     test.done();
