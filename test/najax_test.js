@@ -83,7 +83,7 @@ exports['najax'] = {
     //ssl
     opts = najax('https://www.example.com');
     expected.port = 443;
-    test.deepEqual(opts, [true, expected, false, false, false], 'results should be get www.example.com:80, path = /');
+    test.deepEqual(opts, [true, expected, false, false, false], 'results should be get www.example.com:443, path = /');
 
     //port
     opts = najax('http://www.example.com:66');
@@ -112,7 +112,7 @@ exports['najax'] = {
       //ssl
       expected.port = 443;
       opts = najax[m]('https://www.example.com');
-      test.deepEqual(opts, [true, expected, false, false, false], 'results should be '+m+' www.example.com:80, path = /');
+      test.deepEqual(opts, [true, expected, false, false, false], 'results should be '+m+' www.example.com:443, path = /');
 
 
       //port
