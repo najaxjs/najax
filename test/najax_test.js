@@ -1,5 +1,6 @@
 var najax = require('../lib/najax.js'),
-querystring = require('querystring');
+querystring = require('querystring'),
+_ = require('underscore');
 
 /*
   ======== A Handy Little Nodeunit Reference ========
@@ -23,6 +24,10 @@ querystring = require('querystring');
 
 
 
+function withDefaults(also) {
+  return _.extend({ headers: {}, rejectUnauthorized: true }, also);
+}
+
 exports['najax'] = {
   setUp: function(done) {
     // setup here
@@ -40,7 +45,7 @@ exports['najax'] = {
     test.expect(4);
     var success = function success(){};
     var error = function error(){};
-    expected = { host: 'www.example.com', path: '/', method: 'GET', port: 80, headers: {}, rejectUnauthorized: true };
+    expected = withDefaults({ host: 'www.example.com', path: '/', method: 'GET', port: 80 });
     
     //function(url, callback)
     opts = najax('http://www.example.com', success);
@@ -69,7 +74,7 @@ exports['najax'] = {
 
     //standard
     opts = najax('http://www.example.com');
-    expected = { host: 'www.example.com', path: '/', method: 'GET', port: 80, headers: {}, rejectUnauthorized: true };
+    expected = withDefaults({ host: 'www.example.com', path: '/', method: 'GET', port: 80 });
     test.deepEqual(opts, [false, expected, false, false, false], 'results should be get www.example.com:80, path = /');
 
     opts = najax({ url:'http://www.example.com' });
@@ -100,7 +105,7 @@ exports['najax'] = {
 
       //standard
       opts = najax[m]('http://www.example.com');
-      expected = { host: 'www.example.com', path: '/', method: m.toUpperCase(), port: 80, headers: {}, rejectUnauthorized: true };
+      expected = withDefaults({ host: 'www.example.com', path: '/', method: m.toUpperCase(), port: 80 });
       if(headers) { expected.headers = headers; }
       test.deepEqual(opts, [false, expected, false, false, false], 'results should be '+m+' www.example.com:80, path = /');
       
@@ -137,7 +142,7 @@ exports['najax'] = {
 
     var data = {a:1};
 
-    expected = { host: 'www.example.com', path: '/?a=1', method: 'GET', port: 80, headers: {}, rejectUnauthorized: true };
+    expected = withDefaults({ host: 'www.example.com', path: '/?a=1', method: 'GET', port: 80 });
     opts = najax.get('http://www.example.com', { data: data });
     test.deepEqual( opts, [false, expected, 'a=1', false, false ], 'results should be get www.example.com:80, path = /');
 
