@@ -1,5 +1,7 @@
 # najax
 
+[![Code Climate](https://codeclimate.com/github/alanclarke/najax/badges/gpa.svg)](https://codeclimate.com/github/alanclarke/najax)
+
 Fast, flexible, unit-tested jquery-ajax-stye serverside requests.
 
 jQuery ajax is stupid simple. This project provides a lightweight wrapper for the nodejs http request object that enables jquery ajax style syntax when making serverside requests to other webpages in node.js
