@@ -9,6 +9,7 @@ module.exports = function(grunt) {
     pkg: '<json:package.json>',
     mochacli: {
       options: {
+          require: ['blanket'],
           reporter: 'spec',
           bail: true
       },
