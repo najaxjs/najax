@@ -60,13 +60,14 @@ describe('method overloads', function(next) {
 
 describe('url', function(next) {
   var opts,
-      expected;
+      expected,
+      authed;
 
   najax.defaults({getopts:true});
   expected = withDefaults({ host: 'www.example.com', path: '/', method: 'GET', port: 80 });
   //ssl, options, o.data, o.success, o.error];
 
-  testcount += 25;
+  testcount += 8;
 
   it('should accept plain URL', function() {
     opts = najax('http://www.example.com');
@@ -76,6 +77,24 @@ describe('url', function(next) {
   it('should accept url as property of options object', function() {
     opts = najax({ url:'http://www.example.com' });
     opts.should.deep.equal([false, expected, false, false, false]).mark();
+  });
+
+  it('should parse auth from the url', function() {
+    authed = _.extend({auth: 'user:test'}, expected);
+    opts = najax({ url:'http://' + authed.auth + '@www.example.com' });
+    opts.should.deep.equal([false, authed, false, false, false]).mark();
+  });
+
+  it('should accept auth as property of options object', function() {
+    authed = _.extend({auth: 'user:test'}, expected);
+    opts = najax({ url:'http://www.example.com', auth: authed.auth });
+    opts.should.deep.equal([false, authed, false, false, false]).mark();
+  });
+
+  it('should accept username, password as properties of options object', function() {
+    authed = _.extend({auth: 'user:test'}, authed);
+    opts = najax({ url:'http://www.example.com', username: 'user', password: 'test' });
+    opts.should.deep.equal([false, authed, false, false, false]).mark();
   });
 
   it('should set port to 443 for https URLs', function() {
@@ -96,12 +115,14 @@ describe('url', function(next) {
     opts.should.deep.equal([false, expected, false, false, false]).mark();
   });
 
+  testcount += 32;
+
   'get post put delete'.split(' ').forEach(function(m){
     var headers = false,
         M = m.toUpperCase(),
         expected;
 
-    expected = withDefaults({ host: 'www.example.com', path: '/', method: m.toUpperCase(), port: 80 });
+    expected = withDefaults({ host: 'www.example.com', path: '/', method: M, port: 80});
 
     if(m!=='get'){
       //headers = {'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': 0 };
@@ -118,6 +139,24 @@ describe('url', function(next) {
       expected.path = '/';
       expected.port = 80;
       opts.should.deep.equal([false, expected, false, false, false]).mark();
+    });
+
+    it(M + ' should parse auth from the url', function() {
+      authed = _.extend({auth: 'user:test'}, expected);
+      opts = najax[m]({ url:'http://' + authed.auth + '@www.example.com' });
+      opts.should.deep.equal([false, authed, false, false, false]).mark();
+    });
+
+    it(M + ' should accept auth as property of options object', function() {
+      authed = _.extend({auth: 'user:test'}, expected);
+      opts = najax[m]({ url:'http://www.example.com', auth: authed.auth });
+      opts.should.deep.equal([false, authed, false, false, false]).mark();
+    });
+
+    it(M + ' should accept username, password as properties of options object', function() {
+      authed = _.extend({auth: 'user:test'}, expected);
+      opts = najax[m]({ url:'http://www.example.com', username: 'user', password: 'test' });
+      opts.should.deep.equal([false, authed, false, false, false]).mark();
     });
 
     it(M + ' should set port to 443 for https URLs', function() {
