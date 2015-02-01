@@ -2,12 +2,17 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-mocha-cli');
 
   // Project configuration.
   grunt.initConfig({
     pkg: '<json:package.json>',
-    test: {
-      files: ['test/**/*.js']
+    mochacli: {
+      options: {
+          reporter: 'spec',
+          bail: true
+      },
+      all: ['test/**/*.js']
     },
     lint: {
       files: ['Gruntfile.js', 'lib/**/*.js', 'test/**/*.js']
@@ -30,7 +35,8 @@ module.exports = function(grunt) {
         undef: true,
         boss: true,
         eqnull: true,
-        node: true
+        node: true,
+        mocha: true
       },
       globals: {
         exports: true
@@ -41,5 +47,6 @@ module.exports = function(grunt) {
 
   // Default task.
   grunt.registerTask('lint', ['jshint']);
+  grunt.registerTask('test', ['mochacli']);
   grunt.registerTask('default', ['lint','test']);
 };

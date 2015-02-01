@@ -1,167 +1,184 @@
 var najax = require('../lib/najax.js'),
 querystring = require('querystring'),
-_ = require('underscore');
+_ = require('underscore'),
+chai = require('chai'),
+checkmark = require('chai-checkmark'),
+Tally = require('./tally'),
+expect = chai.expect,
+should = chai.should();
 
-/*
-  ======== A Handy Little Nodeunit Reference ========
-  https://github.com/caolan/nodeunit
 
-  Test methods:
-    test.expect(numAssertions)
-    test.done()
-  Test assertions:
-    test.ok(value, [message])
-    test.equal(actual, expected, [message])
-    test.notEqual(actual, expected, [message])
-    test.deepEqual(actual, expected, [message])
-    test.notDeepEqual(actual, expected, [message])
-    test.strictEqual(actual, expected, [message])
-    test.notStrictEqual(actual, expected, [message])
-    test.throws(block, [error], [message])
-    test.doesNotThrow(block, [error], [message])
-    test.ifError(value)
-*/
-
+chai.use(checkmark);
+var testcount = 0;
 
 
 function withDefaults(also) {
   return _.extend({ headers: {}, rejectUnauthorized: true }, also);
 }
 
-exports['najax'] = {
-  setUp: function(done) {
-    // setup here
-    done();
-  },
-  'methods': function(test) {
-    'get put post delete defaults'.split(' ').forEach(function(m){
-      test.ok(typeof najax[m] ==='function', 'must contain method '+m);
+describe('methods', function() {
+  testcount += 5;
+
+  'get put post delete defaults'.split(' ').forEach(function(m){
+    it('should respond to ' + m, function() {
+      najax.should.itself.respondTo(m).mark();
     });
-      test.done();
-  },
-  'method overloads': function(test){
-    var opts, expected;
-    najax.defaults({getopts:true});
-    test.expect(4);
-    var success = function success(){};
-    var error = function error(){};
-    expected = withDefaults({ host: 'www.example.com', path: '/', method: 'GET', port: 80 });
-    
-    //function(url, callback)
+  });
+});
+
+describe('method overloads', function(next) {
+  var opts,
+      expected,
+      success = function success(){},
+      error = function error(){};
+
+  najax.defaults({getopts:true});
+  expected = withDefaults({ host: 'www.example.com', path: '/', method: 'GET', port: 80 });
+
+  testcount += 4;
+
+  it('should accept argument order: (url, callback)', function() {
     opts = najax('http://www.example.com', success);
-    test.deepEqual(opts, [false, expected, false, success, false], 'results should be get www.example.com:80, path = /', success);
+    opts.should.deep.equal([false, expected, false, success, false]).mark();
+  });
 
-    //function(url, opts, callback)    
+  it('should accept argument order: (url, opts, callback)', function() {
     opts = najax('http://www.example.com', { }, success);
-    test.deepEqual(opts, [false, expected, false, success, false], 'results should be get www.example.com:80, path = /', success);
+    opts.should.deep.equal([false, expected, false, success, false]).mark();
+  });
 
-    //function(opts, callback)    
+  it('should accept argument order: (opts, callback)', function() {
     opts = najax({url:'http://www.example.com'}, success);
-    test.deepEqual(opts, [false, expected, false, success, false], 'results should be get www.example.com:80, path = /', success);
+    opts.should.deep.equal([false, expected, false, success, false]).mark();
+  });
 
-    //function(opts)    
+  it('should accept single argument object: (opts)', function() {
     opts = najax({url:'http://www.example.com', success:success, error:error});
-    test.deepEqual(opts, [false, expected, false, success, error], 'results should be get www.example.com:80, path = /', success);
-    test.done();
-  },
-  'url': function(test){
+    opts.should.deep.equal([false, expected, false, success, error]).mark();
+  });
+});
 
-    var opts, expected;
-    najax.defaults({getopts:true});
-    test.expect(25);
+describe('url', function(next) {
+  var opts,
+      expected;
 
-    //ssl, options, o.data, o.success, o.error];
+  najax.defaults({getopts:true});
+  expected = withDefaults({ host: 'www.example.com', path: '/', method: 'GET', port: 80 });
+  //ssl, options, o.data, o.success, o.error];
 
-    //standard
+  testcount += 25;
+
+  it('should accept plain URL', function() {
     opts = najax('http://www.example.com');
-    expected = withDefaults({ host: 'www.example.com', path: '/', method: 'GET', port: 80 });
-    test.deepEqual(opts, [false, expected, false, false, false], 'results should be get www.example.com:80, path = /');
+    opts.should.deep.equal([false, expected, false, false, false]).mark();
+  });
 
+  it('should accept url as property of options object', function() {
     opts = najax({ url:'http://www.example.com' });
-    test.deepEqual(opts, [false, expected, false, false, false], 'results should be get www.example.com:80, path = /');
+    opts.should.deep.equal([false, expected, false, false, false]).mark();
+  });
 
-    //ssl
+  it('should set port to 443 for https URLs', function() {
     opts = najax('https://www.example.com');
     expected.port = 443;
-    test.deepEqual(opts, [true, expected, false, false, false], 'results should be get www.example.com:443, path = /');
+    opts.should.deep.equal([true, expected, false, false, false]).mark();
+  });
 
-    //port
+  it('should set port to the port in the URL string', function() {
     opts = najax('http://www.example.com:66');
     expected.port = 66;
-    test.deepEqual(opts, [false, expected, false, false, false], 'results should be get www.example.com:66, path = /');
+    opts.should.deep.equal([false, expected, false, false, false]).mark();
+  });
 
-    //path
+  it('should set path to the path in the URL string', function() {
     opts = najax('http://www.example.com:66/blah');
     expected.path = '/blah';
-    test.deepEqual(opts, [false, expected, false, false, false], 'results should be get www.example.com:66, path = /blah');
+    opts.should.deep.equal([false, expected, false, false, false]).mark();
+  });
 
+  'get post put delete'.split(' ').forEach(function(m){
+    var headers = false,
+        M = m.toUpperCase(),
+        expected;
 
-    'get post put delete'.split(' ').forEach(function(m){
-      var headers = false;
+    expected = withDefaults({ host: 'www.example.com', path: '/', method: m.toUpperCase(), port: 80 });
 
-      if(m!=='get'){
-        //headers =  { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': 0 };
-      }
+    if(m!=='get'){
+      //headers = {'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': 0 };
+    }
 
-      //standard
+    it(M + ' should accept plain URL', function() {
       opts = najax[m]('http://www.example.com');
-      expected = withDefaults({ host: 'www.example.com', path: '/', method: m.toUpperCase(), port: 80 });
-      if(headers) { expected.headers = headers; }
-      test.deepEqual(opts, [false, expected, false, false, false], 'results should be '+m+' www.example.com:80, path = /');
-      
-      //ssl
-      expected.port = 443;
-      opts = najax[m]('https://www.example.com');
-      test.deepEqual(opts, [true, expected, false, false, false], 'results should be '+m+' www.example.com:443, path = /');
+      if (headers) { expected.headers = headers; }
+      opts.should.deep.equal([false, expected, false, false, false]).mark();
+    });
 
-
-      //port
-      expected.port = 66;
-      opts = najax[m]('http://www.example.com:66');
-      test.deepEqual(opts, [false, expected, false, false, false], 'results should be '+m+' www.example.com:66, path = /');
-
-      //path
-      expected.path = '/blah';
-      opts = najax[m]('http://www.example.com:66/blah');
-      test.deepEqual(opts, [false, expected, false, false, false], 'results should be '+m+' www.example.com:66, path = /blah');
-
-      //url2
+    it(M + ' should accept url as property of options object', function() {
       opts = najax[m]({ url:'http://www.example.com' });
       expected.path = '/';
       expected.port = 80;
-      test.deepEqual(opts, [false, expected, false, false, false], 'results should be '+m+' www.example.com:80, path = /');
+      opts.should.deep.equal([false, expected, false, false, false]).mark();
     });
 
-    test.done();
-  },
-  'data': function(test){
+    it(M + ' should set port to 443 for https URLs', function() {
+      expected.port = 443;
+      opts = najax[m]('https://www.example.com');
+      opts.should.deep.equal([true, expected, false, false, false]).mark();
+    });
 
-    var opts, expected;
-    najax.defaults({getopts:true});
-    test.expect(4);
+    it(M + ' should set port to the port in the URL string', function() {
+      expected.port = 66;
+      opts = najax[m]('http://www.example.com:66');
+      opts.should.deep.equal([false, expected, false, false, false]).mark();
+    });
 
-    var data = {a:1};
+    it(M + ' should set path to the path in the URL string', function() {
+      expected.path = '/blah';
+      opts = najax[m]('http://www.example.com:66/blah');
+      opts.should.deep.equal([false, expected, false, false, false]).mark();
+    });
+  });
+});
 
-    expected = withDefaults({ host: 'www.example.com', path: '/?a=1', method: 'GET', port: 80 });
+describe('data', function(next) {
+  var opts,
+      expected,
+      data = {a:1};
+
+  najax.defaults({getopts:true});
+  expected = withDefaults({ host: 'www.example.com', path: '/?a=1', method: 'GET', port: 80 });
+
+  testcount += 4;
+
+  it('should encode data passed in options object', function() {
     opts = najax.get('http://www.example.com', { data: data });
-    test.deepEqual( opts, [false, expected, 'a=1', false, false ], 'results should be get www.example.com:80, path = /');
+    opts.should.deep.equal(opts, [false, expected, 'a=1', false, false ]).mark();
+  });
 
-    expected.path =  '/';
-    expected.method =  'POST';
-    expected.headers =  { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8', 'Content-Length': 4 };
+  it('should pass correct headers for x-www-form-urlencoded data', function() {
+    expected.path = '/';
+    expected.method = 'POST';
+    expected.headers = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8', 'Content-Length': 4 };
     opts = najax.post('http://www.example.com', { data: data});
-    test.deepEqual( opts, [false, expected, 'a=1\n', false, false ], 'results should be get www.example.com:80, path = /');
+    opts.should.deep.equal(opts, [false, expected, 'a=1\n', false, false ]).mark();
+  });
 
-
-    expected.headers =  { 'Content-Type': 'application/json;charset=utf-8', 'Content-Length': 8 };
+  it('should pass correct headers for json data', function() {
+    expected.headers = {'Content-Type': 'application/json;charset=utf-8', 'Content-Length': 8 };
     opts = najax.post('http://www.example.com', { data: data, contentType:'json' });
-    test.deepEqual( opts, [false, expected, '{"a":1}\n', false, false ], 'results should be get www.example.com:80, path = /');
+    opts.should.deep.equal(opts, [false, expected, '{"a":1}\n', false, false ]).mark();
+  });
 
-    expected.headers =  { 'Content-Type': 'application/xml;charset=utf-8', 'Content-Length': 8 };
+  it('should pass correct headers for xml data', function() {
+    expected.headers = {'Content-Type': 'application/xml;charset=utf-8', 'Content-Length': 8 };
     opts = najax.post('http://www.example.com', { data: JSON.stringify(data), contentType:'xml' });
-    test.deepEqual( opts, [false, expected, '{"a":1}\n', false, false ], 'results should be get www.example.com:80, path = /');
-    
+    opts.should.deep.equal(opts, [false, expected, '{"a":1}\n', false, false ]).mark();
+  });
+});
 
-    test.done();
-  }
-};
+describe('tally', function() {
+  var tally = expect(testcount).checks();
+  it('should have run ' + testcount + ' tests', function() {
+    tally.getCount().should.equal(testcount);
+  });
+});
