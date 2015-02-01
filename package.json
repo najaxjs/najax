@@ -29,7 +29,9 @@
     "test": "grunt test"
   },
   "devDependencies": {
-    "grunt": "~0.3.11"
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "^0.11.0",
+    "grunt-contrib-watch": "^0.6.1"
   },
   "keywords": [],
   "dependencies":{
