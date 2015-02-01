@@ -148,7 +148,7 @@ describe('data', function(next) {
   najax.defaults({getopts:true});
   expected = withDefaults({ host: 'www.example.com', path: '/?a=1', method: 'GET', port: 80 });
 
-  testcount += 4;
+  testcount += 5;
 
   it('should encode data passed in options object', function() {
     opts = najax.get('http://www.example.com', { data: data });
@@ -172,6 +172,12 @@ describe('data', function(next) {
   it('should pass correct headers for xml data', function() {
     expected.headers = {'Content-Type': 'application/xml;charset=utf-8', 'Content-Length': 8 };
     opts = najax.post('http://www.example.com', { data: JSON.stringify(data), contentType:'xml' });
+    opts.should.deep.equal(opts, [false, expected, '{"a":1}\n', false, false ]).mark();
+  });
+
+  it('should pass custom headers (Cookie)', function() {
+    expected.headers = {'Content-Type': 'application/xml;charset=utf-8', 'Content-Length': 8, 'Cookie': 'connect.sid=s%3ATESTCOOKIE' };
+    opts = najax.post('http://www.example.com', { data: JSON.stringify(data), contentType:'xml', headers: {'Cookie': 'connect.sid=s%3ATESTCOOKIE'} });
     opts.should.deep.equal(opts, [false, expected, '{"a":1}\n', false, false ]).mark();
   });
 });
