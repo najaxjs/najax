@@ -3,6 +3,7 @@ querystring = require('querystring'),
 _ = require('underscore'),
 chai = require('chai'),
 checkmark = require('chai-checkmark'),
+nock = require('nock'),
 Tally = require('./tally'),
 expect = chai.expect,
 should = chai.should();
@@ -16,6 +17,16 @@ function withDefaults(also) {
   return _.extend({ headers: {}, rejectUnauthorized: true }, also);
 }
 
+function createSuccess(done) {
+  return function(data, statusCode) {
+    data.should.equal('Ok');
+    statusCode.should.equal(200).mark();
+    done();
+  };
+}
+
+function error(e){ throw e; }
+
 describe('methods', function() {
   testcount += 5;
 
@@ -27,197 +38,214 @@ describe('methods', function() {
 });
 
 describe('method overloads', function(next) {
-  var opts,
-      expected,
-      success = function success(){},
-      error = function error(){};
+  var scope;
 
-  najax.defaults({getopts:true});
-  expected = withDefaults({ host: 'www.example.com', path: '/', method: 'GET', port: 80 });
-
+  najax.defaults({ error: error });
   testcount += 4;
 
-  it('should accept argument order: (url, callback)', function() {
-    opts = najax('http://www.example.com', success);
-    opts.should.deep.equal([false, expected, false, success, false]).mark();
+  beforeEach(function() {
+    scope = nock('http://www.example.com')
+            .get('/')
+            .reply(200, 'Ok');
   });
 
-  it('should accept argument order: (url, opts, callback)', function() {
-    opts = najax('http://www.example.com', { }, success);
-    opts.should.deep.equal([false, expected, false, success, false]).mark();
+  it('should accept argument order: (url, callback)', function(done) {
+    najax('http://www.example.com/', createSuccess(done));
   });
 
-  it('should accept argument order: (opts, callback)', function() {
-    opts = najax({url:'http://www.example.com'}, success);
-    opts.should.deep.equal([false, expected, false, success, false]).mark();
+  it('should accept argument order: (url, opts, callback)', function(done) {
+    najax('http://www.example.com', { }, createSuccess(done));
   });
 
-  it('should accept single argument object: (opts)', function() {
-    opts = najax({url:'http://www.example.com', success:success, error:error});
-    opts.should.deep.equal([false, expected, false, success, error]).mark();
+  it('should accept argument order: (opts, callback)', function(done) {
+    najax({url:'http://www.example.com'}, createSuccess(done));
+  });
+
+  it('should accept single argument object: (opts)', function(done) {
+    najax({url:'http://www.example.com', success:createSuccess(done), error:error});
   });
 });
 
 describe('url', function(next) {
-  var opts,
-      expected,
-      authed;
+  var scope,
+      username = 'user',
+      password = 'test',
+      authString = username + ':' + password,
+      encrypted = (new Buffer(authString)).toString('base64');
 
-  najax.defaults({getopts:true});
-  expected = withDefaults({ host: 'www.example.com', path: '/', method: 'GET', port: 80 });
-  //ssl, options, o.data, o.success, o.error];
-
+  najax.defaults({ error: error });
   testcount += 8;
 
-  it('should accept plain URL', function() {
-    opts = najax('http://www.example.com');
-    opts.should.deep.equal([false, expected, false, false, false]).mark();
+  function mockPlain(method) {
+    scope = nock('http://www.example.com')[method]('/')
+            .reply(200, 'Ok');
+  }
+
+  function mockHttps(method) {
+    scope = nock('https://www.example.com')[method]('/')
+            .reply(200, 'Ok');
+  }
+
+  function mockAuth(method) {
+    scope = nock('http://www.example.com')[method]('/')
+            .matchHeader('authorization', 'Basic ' + encrypted)
+            .reply(200, 'Ok');
+  }
+
+  it('should accept plain URL', function(done) {
+    mockPlain('get');
+    najax('http://www.example.com', createSuccess(done));
   });
 
-  it('should accept url as property of options object', function() {
-    opts = najax({ url:'http://www.example.com' });
-    opts.should.deep.equal([false, expected, false, false, false]).mark();
+  it('should accept url as property of options object', function(done) {
+    mockPlain('get');
+    najax({ url:'http://www.example.com' }, createSuccess(done));
   });
 
-  it('should parse auth from the url', function() {
-    authed = _.extend({auth: 'user:test'}, expected);
-    opts = najax({ url:'http://' + authed.auth + '@www.example.com' });
-    opts.should.deep.equal([false, authed, false, false, false]).mark();
+  it('should parse auth from the url', function(done) {
+    mockAuth('get');
+    najax({ url:'http://' + authString + '@www.example.com' }, createSuccess(done));
   });
 
-  it('should accept auth as property of options object', function() {
-    authed = _.extend({auth: 'user:test'}, expected);
-    opts = najax({ url:'http://www.example.com', auth: authed.auth });
-    opts.should.deep.equal([false, authed, false, false, false]).mark();
+  it('should accept auth as property of options object', function(done) {
+    mockAuth('get');
+    najax({ url:'http://www.example.com', auth: authString }, createSuccess(done));
   });
 
-  it('should accept username, password as properties of options object', function() {
-    authed = _.extend({auth: 'user:test'}, authed);
-    opts = najax({ url:'http://www.example.com', username: 'user', password: 'test' });
-    opts.should.deep.equal([false, authed, false, false, false]).mark();
+  it('should accept username, password as properties of options object', function(done) {
+    mockAuth('get');
+    najax({ url:'http://www.example.com', username: username, password: password }, createSuccess(done));
   });
 
-  it('should set port to 443 for https URLs', function() {
-    opts = najax('https://www.example.com');
-    expected.port = 443;
-    opts.should.deep.equal([true, expected, false, false, false]).mark();
+  it('should set port to 443 for https URLs', function(done) {
+    mockHttps('get');
+    najax('https://www.example.com', createSuccess(done));
   });
 
-  it('should set port to the port in the URL string', function() {
-    opts = najax('http://www.example.com:66');
-    expected.port = 66;
-    opts.should.deep.equal([false, expected, false, false, false]).mark();
+  it('should set port to the port in the URL string', function(done) {
+    scope = nock('http://www.example.com:66')
+            .get('/')
+            .reply(200, 'Ok');
+
+    najax('http://www.example.com:66', createSuccess(done));
   });
 
-  it('should set path to the path in the URL string', function() {
-    opts = najax('http://www.example.com:66/blah');
-    expected.path = '/blah';
-    opts.should.deep.equal([false, expected, false, false, false]).mark();
+  it('should set path to the path in the URL string', function(done) {
+    scope = nock('http://www.example.com:66')
+            .get('/blah')
+            .reply(200, 'Ok');
+
+    najax('http://www.example.com:66/blah', createSuccess(done));
   });
 
   testcount += 32;
 
   'get post put delete'.split(' ').forEach(function(m){
-    var headers = false,
-        M = m.toUpperCase(),
-        expected;
+    var M = m.toUpperCase();
 
-    expected = withDefaults({ host: 'www.example.com', path: '/', method: M, port: 80});
-
-    if(m!=='get'){
-      //headers = {'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': 0 };
-    }
-
-    it(M + ' should accept plain URL', function() {
-      opts = najax[m]('http://www.example.com');
-      if (headers) { expected.headers = headers; }
-      opts.should.deep.equal([false, expected, false, false, false]).mark();
+    it(M + ' should accept plain URL', function(done) {
+      mockPlain(m);
+      najax[m]('http://www.example.com', createSuccess(done));
     });
 
-    it(M + ' should accept url as property of options object', function() {
-      opts = najax[m]({ url:'http://www.example.com' });
-      expected.path = '/';
-      expected.port = 80;
-      opts.should.deep.equal([false, expected, false, false, false]).mark();
+    it(M + ' should accept url as property of options object', function(done) {
+      mockPlain(m);
+      najax[m]({ url:'http://www.example.com' }, createSuccess(done));
     });
 
-    it(M + ' should parse auth from the url', function() {
-      authed = _.extend({auth: 'user:test'}, expected);
-      opts = najax[m]({ url:'http://' + authed.auth + '@www.example.com' });
-      opts.should.deep.equal([false, authed, false, false, false]).mark();
+    it(M + ' should parse auth from the url', function(done) {
+      mockAuth(m);
+      najax[m]({ url:'http://' + authString + '@www.example.com' }, createSuccess(done));
     });
 
-    it(M + ' should accept auth as property of options object', function() {
-      authed = _.extend({auth: 'user:test'}, expected);
-      opts = najax[m]({ url:'http://www.example.com', auth: authed.auth });
-      opts.should.deep.equal([false, authed, false, false, false]).mark();
+    it(M + ' should accept auth as property of options object', function(done) {
+      mockAuth(m);
+      najax[m]({ url:'http://www.example.com', auth: authString }, createSuccess(done));
     });
 
-    it(M + ' should accept username, password as properties of options object', function() {
-      authed = _.extend({auth: 'user:test'}, expected);
-      opts = najax[m]({ url:'http://www.example.com', username: 'user', password: 'test' });
-      opts.should.deep.equal([false, authed, false, false, false]).mark();
+    it(M + ' should accept username, password as properties of options object', function(done) {
+      mockAuth(m);
+      najax[m]({ url:'http://www.example.com', username: username, password: password }, createSuccess(done));
     });
 
-    it(M + ' should set port to 443 for https URLs', function() {
-      expected.port = 443;
-      opts = najax[m]('https://www.example.com');
-      opts.should.deep.equal([true, expected, false, false, false]).mark();
+    it(M + ' should set port to 443 for https URLs', function(done) {
+      mockHttps(m);
+      najax[m]('https://www.example.com', createSuccess(done));
     });
 
-    it(M + ' should set port to the port in the URL string', function() {
-      expected.port = 66;
-      opts = najax[m]('http://www.example.com:66');
-      opts.should.deep.equal([false, expected, false, false, false]).mark();
+    it(M + ' should set port to the port in the URL string', function(done) {
+      scope = nock('http://www.example.com:66')[m]('/')
+              .reply(200, 'Ok');
+
+      najax[m]('http://www.example.com:66', createSuccess(done));
     });
 
-    it(M + ' should set path to the path in the URL string', function() {
-      expected.path = '/blah';
-      opts = najax[m]('http://www.example.com:66/blah');
-      opts.should.deep.equal([false, expected, false, false, false]).mark();
+    it(M + ' should set path to the path in the URL string', function(done) {
+      scope = nock('http://www.example.com:66')[m]('/blah')
+              .reply(200, 'Ok');
+
+      najax[m]('http://www.example.com:66/blah', createSuccess(done));
     });
   });
 });
 
 describe('data', function(next) {
-  var opts,
-      expected,
-      data = {a:1};
+  var scope,
+      data = { a: 1 },
+      encodedData = '?a=1';
 
-  najax.defaults({getopts:true});
-  expected = withDefaults({ host: 'www.example.com', path: '/?a=1', method: 'GET', port: 80 });
-
+  najax.defaults({ error: error });
   testcount += 5;
 
-  it('should encode data passed in options object', function() {
-    opts = najax.get('http://www.example.com', { data: data });
-    opts.should.deep.equal(opts, [false, expected, 'a=1', false, false ]).mark();
+  it('should encode data passed in options object', function(done) {
+    scope = nock('http://www.example.com')
+            .get('/' + encodedData)
+            .reply(200, 'Ok');
+
+    najax.get('http://www.example.com', { data: data }, createSuccess(done));
   });
 
-  it('should pass correct headers for x-www-form-urlencoded data', function() {
-    expected.path = '/';
-    expected.method = 'POST';
-    expected.headers = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8', 'Content-Length': 4 };
-    opts = najax.post('http://www.example.com', { data: data});
-    opts.should.deep.equal(opts, [false, expected, 'a=1\n', false, false ]).mark();
+  it('should pass correct headers for x-www-form-urlencoded data', function(done) {
+    scope = nock('http://www.example.com')
+            .post('/')
+            .matchHeader('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8')
+            .matchHeader('Content-Length', 4)
+            .reply(200, 'Ok');
+
+    najax.post('http://www.example.com', { data: data }, createSuccess(done));
   });
 
-  it('should pass correct headers for json data', function() {
-    expected.headers = {'Content-Type': 'application/json;charset=utf-8', 'Content-Length': 8 };
-    opts = najax.post('http://www.example.com', { data: data, contentType:'json' });
-    opts.should.deep.equal(opts, [false, expected, '{"a":1}\n', false, false ]).mark();
+  it('should pass correct headers for json data', function(done) {
+    scope = nock('http://www.example.com')
+            .post('/')
+            .matchHeader('Content-Type', 'application/json;charset=utf-8')
+            .matchHeader('Content-Length', 8)
+            .reply(200, 'Ok');
+
+    najax.post('http://www.example.com', { data: data, contentType:'json' }, createSuccess(done));
   });
 
-  it('should pass correct headers for xml data', function() {
-    expected.headers = {'Content-Type': 'application/xml;charset=utf-8', 'Content-Length': 8 };
-    opts = najax.post('http://www.example.com', { data: JSON.stringify(data), contentType:'xml' });
-    opts.should.deep.equal(opts, [false, expected, '{"a":1}\n', false, false ]).mark();
+  it('should pass correct headers for xml data', function(done) {
+    scope = nock('http://www.example.com')
+            .post('/')
+            .matchHeader('Content-Type', 'application/xml;charset=utf-8')
+            .matchHeader('Content-Length', 8)
+            .reply(200, 'Ok');
+
+    najax.post('http://www.example.com', { data: JSON.stringify(data), contentType:'xml' }, createSuccess(done));
   });
 
-  it('should pass custom headers (Cookie)', function() {
-    expected.headers = {'Content-Type': 'application/xml;charset=utf-8', 'Content-Length': 8, 'Cookie': 'connect.sid=s%3ATESTCOOKIE' };
-    opts = najax.post('http://www.example.com', { data: JSON.stringify(data), contentType:'xml', headers: {'Cookie': 'connect.sid=s%3ATESTCOOKIE'} });
-    opts.should.deep.equal(opts, [false, expected, '{"a":1}\n', false, false ]).mark();
+  it('should pass custom headers (Cookie)', function(done) {
+    var cookie = 'connect.sid=s%3ATESTCOOKIE';
+
+    scope = nock('http://www.example.com')
+            .post('/')
+            .matchHeader('Content-Type', 'application/xml;charset=utf-8')
+            .matchHeader('Content-Length', 8)
+            .matchHeader('Cookie', cookie)
+            .reply(200, 'Ok');
+
+    najax.post('http://www.example.com', { data: JSON.stringify(data), contentType:'xml', headers: {'Cookie': cookie} }, createSuccess(done));
   });
 });
 
