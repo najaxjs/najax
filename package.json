@@ -8,6 +8,13 @@
     "email": "self@alz.so",
     "url": "alz.so"
   },
+  "contributors": [
+    "doublerebel",
+    "philschatz",
+    "rhildred",
+    "mar-tino",
+    "mixu"
+  ],
   "repository": {
     "type": "git",
     "url": "git@github.com:alanclarke/najax.git"

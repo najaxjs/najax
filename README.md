@@ -39,5 +39,5 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 
 ## License
-Copyright (c) 2012 Alan Clarke  
+Copyright (c) 2012-2015 Alan Clarke
 Licensed under the MIT license.
