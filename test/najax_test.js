@@ -66,6 +66,38 @@ describe('method overloads', function(next) {
   });
 });
 
+describe('404', function (next) {
+    var scope;
+
+    beforeEach(function () {
+        scope = nock('http://www.example.com')
+            .get('/')
+            .reply(404, 'Fail');
+    });
+
+    var checkData = function (done) {
+        return function (data, statusCode) {
+            data.should.equal('Fail');
+            statusCode.should.equal(404).mark();
+            done();
+        };
+    };
+
+    it('Must call error callback', function (done) {
+        najax('http://www.example.com/', {
+            error: checkData(done)
+        });
+    });
+    it('Must reject', function (done) {
+        najax('http://www.example.com/').fail(checkData(done));
+    });
+
+    it('Must reject json to', function (done) {
+        najax('http://www.example.com/', {json: true}).fail(checkData(done));
+    });
+
+});
+
 describe('url', function(next) {
   var scope,
       username = 'user',
