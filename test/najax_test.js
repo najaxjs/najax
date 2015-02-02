@@ -18,9 +18,9 @@ function withDefaults(also) {
 }
 
 function createSuccess(done) {
-  return function(data, statusCode) {
+  return function(data, statusText) {
     data.should.equal('Ok');
-    statusCode.should.equal(200).mark();
+    statusText.should.equal('success').mark();
     done();
   };
 }
@@ -222,7 +222,7 @@ describe('data', function(next) {
             .matchHeader('Content-Length', 8)
             .reply(200, 'Ok');
 
-    najax.post('http://www.example.com', { data: data, contentType:'json' }, createSuccess(done));
+    najax.post('http://www.example.com', { data: data, contentType:'application/json' }, createSuccess(done));
   });
 
   it('should pass correct headers for xml data', function(done) {
@@ -232,7 +232,7 @@ describe('data', function(next) {
             .matchHeader('Content-Length', 8)
             .reply(200, 'Ok');
 
-    najax.post('http://www.example.com', { data: JSON.stringify(data), contentType:'xml' }, createSuccess(done));
+    najax.post('http://www.example.com', { data: JSON.stringify(data), contentType:'application/xml' }, createSuccess(done));
   });
 
   it('should pass custom headers (Cookie)', function(done) {
@@ -245,7 +245,7 @@ describe('data', function(next) {
             .matchHeader('Cookie', cookie)
             .reply(200, 'Ok');
 
-    najax.post('http://www.example.com', { data: JSON.stringify(data), contentType:'xml', headers: {'Cookie': cookie} }, createSuccess(done));
+    najax.post('http://www.example.com', { data: JSON.stringify(data), contentType:'application/xml', headers: {'Cookie': cookie} }, createSuccess(done));
   });
 });
 
