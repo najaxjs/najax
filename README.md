@@ -12,6 +12,17 @@ It features very flexible method overloads to suit various styles, including wit
 
 It seamlessly handles ssl and makes some reasonable assumptions based on inputs but as usual everything can be overridden by passing an options object.
 
+## Changelog
+
+### 0.2.0
+
+**Breaking changes!**
+
+  * `success` and `error` callback arguments are now in [jQuery.ajax](https://api.jquery.com/jquery.ajax/) order and format.
+  * `contentType` must now be the full string, i.e. `application/json`, not just `json`.
+  * Undocumented `encoder` option deprecated.  Any object can already override its own `toString()`.
+  * CRLF (`\n`) removed from end of POST message body.  It did not match HTTP spec.
+
 ## Getting Started
 Install the module with: `npm install najax`
 
