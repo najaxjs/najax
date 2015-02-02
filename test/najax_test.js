@@ -207,9 +207,9 @@ describe('data', function(next) {
 
   it('should pass correct headers for x-www-form-urlencoded data', function(done) {
     scope = nock('http://www.example.com')
-            .post('/')
+            .post('/', data)
             .matchHeader('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8')
-            .matchHeader('Content-Length', 4)
+            .matchHeader('Content-Length', 3)
             .reply(200, 'Ok');
 
     najax.post('http://www.example.com', { data: data }, createSuccess(done));
@@ -217,9 +217,9 @@ describe('data', function(next) {
 
   it('should pass correct headers for json data', function(done) {
     scope = nock('http://www.example.com')
-            .post('/')
+            .post('/', data)
             .matchHeader('Content-Type', 'application/json;charset=utf-8')
-            .matchHeader('Content-Length', 8)
+            .matchHeader('Content-Length', 7)
             .reply(200, 'Ok');
 
     najax.post('http://www.example.com', { data: data, contentType:'application/json' }, createSuccess(done));
@@ -227,9 +227,9 @@ describe('data', function(next) {
 
   it('should pass correct headers for xml data', function(done) {
     scope = nock('http://www.example.com')
-            .post('/')
+            .post('/', data)
             .matchHeader('Content-Type', 'application/xml;charset=utf-8')
-            .matchHeader('Content-Length', 8)
+            .matchHeader('Content-Length', 7)
             .reply(200, 'Ok');
 
     najax.post('http://www.example.com', { data: JSON.stringify(data), contentType:'application/xml' }, createSuccess(done));
@@ -239,9 +239,9 @@ describe('data', function(next) {
     var cookie = 'connect.sid=s%3ATESTCOOKIE';
 
     scope = nock('http://www.example.com')
-            .post('/')
+            .post('/', data)
             .matchHeader('Content-Type', 'application/xml;charset=utf-8')
-            .matchHeader('Content-Length', 8)
+            .matchHeader('Content-Length', 7)
             .matchHeader('Cookie', cookie)
             .reply(200, 'Ok');
 
