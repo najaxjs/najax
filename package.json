@@ -37,14 +37,14 @@
   },
   "devDependencies": {
     "blanket": "^1.1.6",
-    "chai": "^1.10.0",
+    "chai": "^2.1.2",
     "chai-checkmark": "^1.0.1",
     "grunt": "~0.4.1",
     "grunt-contrib-jshint": "^0.11.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-mocha-cli": "^1.12.0",
     "mocha": "^2.1.0",
-    "nock": "^0.59.1"
+    "nock": "^1.2.1"
   },
   "keywords": [],
   "dependencies": {
