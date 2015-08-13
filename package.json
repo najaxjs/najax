@@ -1,7 +1,7 @@
 {
   "name": "najax",
   "description": "fast, flexible, unit-tested jquery-ajax-stye serverside requests",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": "https://github.com/alanclarke/najax",
   "author": {
     "name": "Alan Clarke",
