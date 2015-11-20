@@ -1,7 +1,7 @@
 {
   "name": "najax",
   "description": "fast, flexible, unit-tested jquery-ajax-stye serverside requests",
-  "version": "0.1.05",
+  "version": "0.2.1",
   "homepage": "https://github.com/alanclarke/najax",
   "author": {
     "name": "Alan Clarke",
@@ -33,18 +33,21 @@
     "node": ">= 0.6.0"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "node_modules/.bin/grunt test"
   },
   "devDependencies": {
     "blanket": "^1.1.6",
-    "chai": "^1.10.0",
+    "chai": "^2.1.2",
     "chai-checkmark": "^1.0.1",
+    "express": "^4.13.3",
+    "getport": "^0.1.0",
     "grunt": "~0.4.1",
+    "grunt-cli": "^0.1.13",
     "grunt-contrib-jshint": "^0.11.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-mocha-cli": "^1.12.0",
     "mocha": "^2.1.0",
-    "nock": "^0.59.1"
+    "nock": "^2.10.0"
   },
   "keywords": [],
   "dependencies": {

@@ -207,7 +207,7 @@ describe('data', function(next) {
 
   it('should pass correct headers for x-www-form-urlencoded data', function(done) {
     scope = nock('http://www.example.com')
-            .post('/', data)
+            .post('/', 'a=1')
             .matchHeader('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8')
             .matchHeader('Content-Length', 3)
             .reply(200, 'Ok');
@@ -247,6 +247,26 @@ describe('data', function(next) {
 
     najax.post('http://www.example.com', { data: JSON.stringify(data), contentType:'application/xml', headers: {'Cookie': cookie} }, createSuccess(done));
   });
+
+});
+
+describe('timeout', function () {
+  var scope;
+  testcount += 1;
+
+  it('should timeout', function(done) {
+    scope = nock('http://www.example.com')
+            .post('/')
+            .socketDelay(1000)
+            .reply(200, 'Ok');
+
+    najax.post('http://www.example.com', { timeout: 1, error: false })
+      .always(function (data, statusText) {
+        expect(statusText).to.eql('timeout').mark();
+        done();
+      });
+  });
+
 });
 
 describe('tally', function() {

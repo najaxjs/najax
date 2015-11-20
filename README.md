@@ -1,8 +1,9 @@
 # najax
 
-[![Code Climate](https://codeclimate.com/github/alanclarke/najax/badges/gpa.svg)](https://codeclimate.com/github/alanclarke/najax)
-[![Dependency Status](https://david-dm.org/alanclarke/najax.svg)](https://david-dm.org/alanclarke/najax)
-[![devDependency Status](https://david-dm.org/alanclarke/najax/dev-status.svg)](https://david-dm.org/alanclarke/najax#info=devDependencies)
+[![Travis CI](https://travis-ci.org/najaxjs/najax.svg)](https://travis-ci.org/najaxjs/najax)
+[![Code Climate](https://codeclimate.com/github/najaxjs/najax/badges/gpa.svg)](https://codeclimate.com/github/najaxjs/najax)
+[![Dependency Status](https://david-dm.org/najaxjs/najax.svg)](https://david-dm.org/najaxjs/najax)
+[![devDependency Status](https://david-dm.org/najaxjs/najax/dev-status.svg)](https://david-dm.org/najaxjs/najax#info=devDependencies)
 
 Fast, flexible, unit-tested jquery-ajax-stye serverside requests.
 
