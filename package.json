@@ -33,7 +33,6 @@
   },
   "devDependencies": {
     "chai": "^3.4.1",
-    "chai-checkmark": "^1.0.1",
     "getport": "^0.1.0",
     "istanbul": "^0.4.1",
     "mocha": "^2.3.4",
