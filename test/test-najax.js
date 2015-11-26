@@ -1,42 +1,13 @@
 /* globals describe beforeEach it */
 var najax = require('../lib/najax.js')
-var chai = require('chai')
-var checkmark = require('chai-checkmark')
+var expect = require('chai').expect
 var nock = require('nock')
-var expect = chai.expect
-chai.should()
-
-chai.use(checkmark)
-var testcount = 0
-
-function createSuccess (done) {
-  return function (data, statusText) {
-    data.should.equal('Ok')
-    statusText.should.equal('success').mark()
-    done()
-  }
-}
-
-function error (e) {
-  throw e
-}
-
-describe('methods', function () {
-  testcount += 5
-
-  ;['get', 'put', 'post', 'delete', 'defaults'].forEach(function (m) {
-    it('should respond to ' + m, function () {
-      najax.should.itself.respondTo(m).mark()
-    })
-  })
-})
 
 describe('method overloads', function (next) {
   najax.defaults({ error: error })
-  testcount += 4
 
   beforeEach(function () {
-    nock('http://www.example.com').get('/').reply(200, 'Ok')
+    nock('http://www.example.com').get('/').reply(200, 'ok')
   })
 
   it('should accept argument order: (url, callback)', function (done) {
@@ -67,20 +38,19 @@ describe('url', function (next) {
   var encrypted = (new Buffer(authString)).toString('base64')
 
   najax.defaults({ error: error })
-  testcount += 8
 
   function mockPlain (method) {
-    nock('http://www.example.com')[method]('/').reply(200, 'Ok')
+    nock('http://www.example.com')[method]('/').reply(200, 'ok')
   }
 
   function mockHttps (method) {
-    nock('https://www.example.com')[method]('/').reply(200, 'Ok')
+    nock('https://www.example.com')[method]('/').reply(200, 'ok')
   }
 
   function mockAuth (method) {
     nock('http://www.example.com')[method]('/')
       .matchHeader('authorization', 'Basic ' + encrypted)
-      .reply(200, 'Ok')
+      .reply(200, 'ok')
   }
 
   it('should accept plain URL', function (done) {
@@ -118,16 +88,15 @@ describe('url', function (next) {
   })
 
   it('should set port to the port in the URL string', function (done) {
-    nock('http://www.example.com:66').get('/').reply(200, 'Ok')
+    nock('http://www.example.com:66').get('/').reply(200, 'ok')
     najax('http://www.example.com:66', createSuccess(done))
   })
 
   it('should set path to the path in the URL string', function (done) {
-    nock('http://www.example.com:66').get('/blah').reply(200, 'Ok')
+    nock('http://www.example.com:66').get('/blah').reply(200, 'ok')
     najax('http://www.example.com:66/blah', createSuccess(done))
   })
 
-  testcount += 32
   ;['get', 'post', 'put', 'delete'].forEach(function (m) {
     var M = m.toUpperCase()
 
@@ -173,12 +142,12 @@ describe('url', function (next) {
     })
 
     it(M + ' should set port to the port in the URL string', function (done) {
-      nock('http://www.example.com:66')[m]('/').reply(200, 'Ok')
+      nock('http://www.example.com:66')[m]('/').reply(200, 'ok')
       najax[m]('http://www.example.com:66', createSuccess(done))
     })
 
     it(M + ' should set path to the path in the URL string', function (done) {
-      nock('http://www.example.com:66')[m]('/blah').reply(200, 'Ok')
+      nock('http://www.example.com:66')[m]('/blah').reply(200, 'ok')
       najax[m]('http://www.example.com:66/blah', createSuccess(done))
     })
   })
@@ -189,10 +158,9 @@ describe('data', function (next) {
   var encodedData = '?a=1'
 
   najax.defaults({ error: error })
-  testcount += 5
 
   it('should encode data passed in options object', function (done) {
-    nock('http://www.example.com').get('/' + encodedData).reply(200, 'Ok')
+    nock('http://www.example.com').get('/' + encodedData).reply(200, 'ok')
     najax.get('http://www.example.com', {
       data: data
     }, createSuccess(done))
@@ -203,7 +171,7 @@ describe('data', function (next) {
       .post('/', 'a=1')
       .matchHeader('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8')
       .matchHeader('Content-Length', 3)
-      .reply(200, 'Ok')
+      .reply(200, 'ok')
 
     najax.post('http://www.example.com', { data: data }, createSuccess(done))
   })
@@ -213,7 +181,7 @@ describe('data', function (next) {
       .post('/', data)
       .matchHeader('Content-Type', 'application/json;charset=utf-8')
       .matchHeader('Content-Length', 7)
-      .reply(200, 'Ok')
+      .reply(200, 'ok')
 
     najax.post('http://www.example.com', {
       data: data,
@@ -226,7 +194,7 @@ describe('data', function (next) {
       .post('/', data)
       .matchHeader('Content-Type', 'application/xml;charset=utf-8')
       .matchHeader('Content-Length', 7)
-      .reply(200, 'Ok')
+      .reply(200, 'ok')
 
     najax.post('http://www.example.com', {
       data: JSON.stringify(data),
@@ -242,7 +210,7 @@ describe('data', function (next) {
       .matchHeader('Content-Type', 'application/xml;charset=utf-8')
       .matchHeader('Content-Length', 7)
       .matchHeader('Cookie', cookie)
-      .reply(200, 'Ok')
+      .reply(200, 'ok')
 
     najax.post('http://www.example.com', {
       data: JSON.stringify(data),
@@ -255,25 +223,28 @@ describe('data', function (next) {
 })
 
 describe('timeout', function () {
-  testcount += 1
-
   it('should timeout', function (done) {
     nock('http://www.example.com')
       .post('/')
       .socketDelay(1000)
-      .reply(200, 'Ok')
+      .reply(200, 'ok')
     var opts = { timeout: 1, error: false }
     najax.post('http://www.example.com', opts)
       .always(function (data, statusText) {
-        expect(statusText).to.eql('timeout').mark()
+        expect(statusText).to.eql('timeout')
         done()
       })
   })
 })
 
-describe('tally', function () {
-  var tally = expect(testcount).checks()
-  it('should have run ' + testcount + ' tests', function () {
-    tally.getCount().should.equal(testcount)
-  })
-})
+function createSuccess (done) {
+  return function (data, statusText) {
+    expect(data).to.equal('ok')
+    expect(statusText).to.equal('success')
+    done()
+  }
+}
+
+function error (e) {
+  throw e
+}
