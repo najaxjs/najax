@@ -4,8 +4,10 @@
 [![Code Climate](https://codeclimate.com/github/najaxjs/najax/badges/gpa.svg)](https://codeclimate.com/github/najaxjs/najax)
 [![Dependency Status](https://david-dm.org/najaxjs/najax.svg)](https://david-dm.org/najaxjs/najax)
 [![devDependency Status](https://david-dm.org/najaxjs/najax/dev-status.svg)](https://david-dm.org/najaxjs/najax#info=devDependencies)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 
-Fast, flexible, unit-tested jquery-ajax-stye serverside requests.
+
+jQuery ajax-stye http requests in node
 
 jQuery ajax is stupid simple. This project provides a lightweight wrapper for the nodejs http request object that enables jquery ajax style syntax when making serverside requests to other webpages in node.js
 
@@ -38,18 +40,7 @@ najax.get, najax.post, najax.put, najax.delete...
 ```
 
 ## Run unit tests
-- cd dir
-- npm -g install grunt
-- npm install
-- grunt test
-
-## Examples
-_(Coming soon)_
+- npm install && npm test
 
 ## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [grunt](https://github.com/cowboy/grunt).
-
-
-## License
-Copyright (c) 2012-2015 Alan Clarke
-Licensed under the MIT license.
+In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [standardjs](https://github.com/feross/standard).
