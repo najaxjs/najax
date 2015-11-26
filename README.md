@@ -17,6 +17,10 @@ It seamlessly handles ssl and makes some reasonable assumptions based on inputs 
 
 ## Changelog
 
+### 0.3.0
+
+  * switched from underscore to lodash
+
 ### 0.2.0
 
 **Breaking changes!**
@@ -30,13 +34,15 @@ It seamlessly handles ssl and makes some reasonable assumptions based on inputs 
 Install the module with: `npm install najax`
 
 ```javascript
-var najax = require('najax');
-najax('http://www.google.com', function(html){ console.log(html); }); // "awesome"
-najax('http://www.google.com', { type:'POST' }, function(html){ console.log(html); }); // "awesome"
-najax({ url:'http://www.google.com', type:'POST', success: function(html){ console.log(html); }); // "awesome"
-najax({ url:'http://www.google.com', type:'POST' }).success(function(resp){}).error(function(err){}); // "awesome"
+var najax = $ = require('najax');
+najax('http://www.google.com', callback)
+najax('http://www.google.com', { type:'POST' }, callback)
+najax({ url: 'http://www.google.com', type:'POST', success: callback })
+najax({ url: 'http://www.google.com', type:'POST' })
+  .success(callback)
+  .error(errorHandler)
 
-najax.get, najax.post, najax.put, najax.delete...
+$.get, $.post, $.put, $.delete...
 ```
 
 ## Run unit tests
