@@ -34,11 +34,11 @@ It seamlessly handles ssl and makes some reasonable assumptions based on inputs 
 Install the module with: `npm install najax`
 
 ```javascript
-var najax = $ = require('najax');
+var najax = $ = require('najax')
 najax('http://www.google.com', callback)
-najax('http://www.google.com', { type:'POST' }, callback)
-najax({ url: 'http://www.google.com', type:'POST', success: callback })
-najax({ url: 'http://www.google.com', type:'POST' })
+najax('http://www.google.com', { type: 'POST' }, callback)
+najax({ url: 'http://www.google.com', type: 'POST', success: callback })
+najax({ url: 'http://www.google.com', type: 'POST' })
   .success(callback)
   .error(errorHandler)
 
