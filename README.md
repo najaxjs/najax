@@ -1,7 +1,6 @@
 # najax
 
 [![Travis CI](https://travis-ci.org/najaxjs/najax.svg)](https://travis-ci.org/najaxjs/najax)
-[![Code Climate](https://codeclimate.com/github/najaxjs/najax/badges/gpa.svg)](https://codeclimate.com/github/najaxjs/najax)
 [![Dependency Status](https://david-dm.org/najaxjs/najax.svg)](https://david-dm.org/najaxjs/najax)
 [![devDependency Status](https://david-dm.org/najaxjs/najax/dev-status.svg)](https://david-dm.org/najaxjs/najax#info=devDependencies)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
