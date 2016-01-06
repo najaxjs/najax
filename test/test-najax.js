@@ -97,6 +97,11 @@ describe('url', function (next) {
     najax('http://www.example.com:66/blah', createSuccess(done))
   })
 
+  it('supports legacy jQuery `type` instead of `method`', function (done) {
+    nock('http://www.example.com').post('/').reply(201, 'ok')
+    najax({url: 'http://www.example.com/', type: 'POST'}, createSuccess(done))
+  })
+
   ;['get', 'post', 'put', 'delete'].forEach(function (m) {
     var M = m.toUpperCase()
 
