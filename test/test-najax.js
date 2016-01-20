@@ -242,6 +242,34 @@ describe('timeout', function () {
   })
 })
 
+describe('headers', function () {
+  beforeEach(function () {
+    nock('http://www.example.com')
+      .post('/')
+      .reply(200, 'ok', {
+        'content-type': 'application/json; charset=utf-8',
+        'server': 'Test Server'
+      })
+  })
+
+  it('should return the concatenated headers from getAllResponseHeaders', function (done) {
+    najax.post('http://www.example.com')
+      .then(function (data, statusText, jqXHR) {
+        expect(jqXHR.getAllResponseHeaders())
+          .to.equal('content-type: application/json; charset=utf-8\nserver: Test Server')
+        done()
+      })
+  })
+
+  it('should return the value for the header passed to getResponseHeader', function (done) {
+    najax.post('http://www.example.com')
+      .then(function (data, statusText, jqXHR) {
+        expect(jqXHR.getResponseHeader('server')).to.equal('Test Server')
+        done()
+      })
+  })
+})
+
 function createSuccess (done) {
   return function (data, statusText) {
     expect(data).to.equal('ok')
