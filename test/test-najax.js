@@ -225,6 +225,23 @@ describe('data', function (next) {
       }
     }, createSuccess(done))
   })
+
+  it('should support beforeSend and setRequestHeader', function (done) {
+    nock('http://www.example.com')
+      .post('/', data)
+      .matchHeader('Content-Type', 'application/xml;charset=utf-8')
+      .matchHeader('Content-Length', 7)
+      .matchHeader('Accepts', 'application/vnd.json+api')
+      .reply(200, 'ok')
+
+    najax.post('http://www.example.com', {
+      data: JSON.stringify(data),
+      contentType: 'application/xml',
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader('Accepts', 'application/vnd.json+api')
+      }
+    }, createSuccess(done))
+  })
 })
 
 describe('timeout', function () {
