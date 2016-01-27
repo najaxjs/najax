@@ -31,11 +31,10 @@ describe('method overloads', function (next) {
   })
 
   it('should call complete when finished', function (done) {
-    najax({ url: 'http://www.example.com', complete: function() {
-      done();
+    najax({ url: 'http://www.example.com', complete: function () {
+      done()
     }})
   })
-
 })
 
 describe('url', function (next) {
