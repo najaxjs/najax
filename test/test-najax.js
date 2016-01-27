@@ -90,7 +90,7 @@ describe('url', function (next) {
   it('should succeed when result is good JSON', function (done) {
     nock('http://www.example.com')
       .get('/')
-      .reply(200, {"test": "ok"})
+      .reply(200, {'test': 'ok'})
 
     najax({url: 'http://www.example.com', dataType: 'json'}, jsonSuccess(done))
   })
