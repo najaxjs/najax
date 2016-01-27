@@ -63,6 +63,19 @@ describe('url', function (next) {
     najax({ url: 'http://www.example.com' }, createSuccess(done))
   })
 
+  it('should not fail when result is broken JSON', function (done) {
+    mockPlain('get')
+    najax({url: 'http://www.example.com', dataType: 'json'}, jsonError(done))
+  })
+
+  it('should succeed when result is good JSON', function (done) {
+    nock('http://www.example.com')
+      .get('/')
+      .reply(200, {"test": "ok"})
+
+    najax({url: 'http://www.example.com', dataType: 'json'}, jsonSuccess(done))
+  })
+
   it('should parse auth from the url', function (done) {
     mockAuth('get')
     najax({ url: 'http://' + authString + '@www.example.com' }, createSuccess(done))
@@ -290,6 +303,22 @@ describe('headers', function () {
 function createSuccess (done) {
   return function (data, statusText) {
     expect(data).to.equal('ok')
+    expect(statusText).to.equal('success')
+    done()
+  }
+}
+
+function jsonSuccess (done) {
+  return function (data, statusText) {
+    expect(data.test).to.equal('ok')
+    expect(statusText).to.equal('success')
+    done()
+  }
+}
+
+function jsonError (done) {
+  return function (data, statusText) {
+    expect(data.test).to.be.undefined
     expect(statusText).to.equal('success')
     done()
   }
