@@ -29,6 +29,13 @@ describe('method overloads', function (next) {
       error: error
     })
   })
+
+  it('should call complete when finished', function (done) {
+    najax({ url: 'http://www.example.com', complete: function() {
+      done();
+    }})
+  })
+
 })
 
 describe('url', function (next) {
