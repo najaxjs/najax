@@ -29,12 +29,6 @@ describe('method overloads', function (next) {
       error: error
     })
   })
-
-  it('should call complete when finished', function (done) {
-    najax({ url: 'http://www.example.com', complete: function () {
-      done()
-    }})
-  })
 })
 
 describe('url', function (next) {
@@ -262,6 +256,17 @@ describe('timeout', function () {
         expect(statusText).to.eql('timeout')
         done()
       })
+  })
+  it('should call complete with status when finished', function (done) {
+    nock('http://www.example.com')
+      .post('/')
+      .socketDelay(1000)
+      .reply(200, 'ok')
+    var opts = { timeout: 1, error: false, complete: function (jqXHR, statusText) {
+      expect(statusText).to.eql('timeout')
+      done()
+    }}
+    najax.post('http://www.example.com', opts)
   })
 })
 
