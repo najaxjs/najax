@@ -10,36 +10,14 @@ jQuery ajax-stye http requests in node
 
 jQuery ajax is stupid simple. This project provides a lightweight wrapper for the nodejs http request object that enables jquery ajax style syntax when making serverside requests to other webpages in node.js
 
-It features very flexible method overloads to suit various styles, including with jquery style deferreds.
-
-It seamlessly handles ssl and makes some reasonable assumptions based on inputs but as usual everything can be overridden by passing an options object.
-
-## Changelog
-
-### 0.5.0
-
-  * Support gzip and deflate.
-  * End support for Node 0.10.
-
-### 0.3.0
-
-  * switched from underscore to lodash
-
-### 0.2.0
-
-**Breaking changes!**
-
-  * `success` and `error` callback arguments are now in [jQuery.ajax](https://api.jquery.com/jquery.ajax/) order and format.
-  * `contentType` must now be the full string, i.e. `application/json`, not just `json`.
-  * Undocumented `encoder` option deprecated.  Any object can already override its own `toString()`.
-  * CRLF (`\n`) removed from end of POST message body.  It did not match HTTP spec.
+In addition to najax.get, , handles ssl and makes some reasonable assumptions based on inputs and everything can be overridden by passing an options object.
 
 ## Getting Started
 Install the module with: `npm install najax`
 
 ```javascript
 var najax = $ = require('najax')
-najax('http://www.google.com', callback)
+$.get('http://www.google.com', callback)
 najax('http://www.google.com', { type: 'POST' }, callback)
 najax({ url: 'http://www.google.com', type: 'POST', success: callback })
 najax({ url: 'http://www.google.com', type: 'POST' })
