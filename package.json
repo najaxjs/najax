@@ -1,7 +1,7 @@
 {
   "name": "najax",
   "description": "jquery ajax-stye http requests in node",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "homepage": "https://github.com/najaxjs/najax",
   "author": "Alan Clarke <self@alz.so> (alz.so)",
   "contributors": [
