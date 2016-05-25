@@ -16,6 +16,11 @@ It seamlessly handles ssl and makes some reasonable assumptions based on inputs 
 
 ## Changelog
 
+### 0.5.0
+
+  * Support gzip and deflate.
+  * End support for Node 0.10.
+
 ### 0.3.0
 
   * switched from underscore to lodash

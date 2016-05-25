@@ -2,6 +2,7 @@
 var najax = require('../lib/najax.js')
 var expect = require('chai').expect
 var nock = require('nock')
+var zlib = require('zlib')
 
 describe('method overloads', function (next) {
   najax.defaults({ error: error })
@@ -51,6 +52,16 @@ describe('url', function (next) {
     nock('http://www.example.com')[method]('/')
       .matchHeader('authorization', 'Basic ' + encrypted)
       .reply(200, 'ok')
+  }
+
+  function mockGzip (method) {
+    nock('http://www.example.com')[method]('/')
+      .reply(200, zlib.gzipSync('ok'), { 'Content-Encoding': 'gzip' })
+  }
+
+  function mockDeflate (method) {
+    nock('http://www.example.com')[method]('/')
+      .reply(200, zlib.deflateSync('ok'), { 'Content-Encoding': 'deflate' })
   }
 
   it('should accept plain URL', function (done) {
@@ -154,6 +165,16 @@ describe('url', function (next) {
     it(M + ' should set path to the path in the URL string', function (done) {
       nock('http://www.example.com:66')[m]('/blah').reply(200, 'ok')
       najax[m]('http://www.example.com:66/blah', createSuccess(done))
+    })
+
+    it(M + ' should handle gzipped response', function (done) {
+      mockGzip(m)
+      najax[m]('http://www.example.com', createSuccess(done))
+    })
+
+    it(M + ' should handle deflated response', function (done) {
+      mockDeflate(m)
+      najax[m]('http://www.example.com', createSuccess(done))
     })
   })
 })
