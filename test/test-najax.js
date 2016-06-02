@@ -202,6 +202,14 @@ describe('data', function (next) {
     najax.post('http://www.example.com', { data: data }, createSuccess(done))
   })
 
+  it('should support nested urlencoded objects, because you could just content-type=json but yolo', function (done) {
+    nock('http://www.example.com')
+      .post('/', 'a=1&b%5Bc%5D=1')
+      .matchHeader('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8')
+      .reply(200, 'ok')
+    najax.post('http://www.example.com', { data: { a: 1, b: { c: 1 } } }, createSuccess(done))
+  })
+
   it('should pass correct headers for json data', function (done) {
     nock('http://www.example.com')
       .post('/', data)
