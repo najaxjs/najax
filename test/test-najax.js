@@ -30,6 +30,14 @@ describe('method overloads', function (next) {
       error: error
     })
   })
+
+  it('should default to "GET" for the method if not specified', function () {
+    var debug = najax({
+      url: 'http://www.example.com',
+      getopts: true
+    })
+    expect(debug[1].method).to.eql('GET')
+  })
 })
 
 describe('url', function (next) {
