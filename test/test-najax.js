@@ -366,7 +366,7 @@ function jsonSuccess (done) {
 
 function jsonError (done) {
   return function (data, statusText) {
-    expect(data.test).to.be.undefined
+    expect(data.state).to.equal('parsererror')
     expect(statusText).to.equal('success')
     done()
   }
