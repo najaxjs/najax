@@ -1,8 +1,14 @@
-/* globals describe beforeEach it */
+/* globals describe beforeEach afterEach it */
 var najax = require('../lib/najax.js')
 var expect = require('chai').expect
 var nock = require('nock')
 var zlib = require('zlib')
+
+// prevent cross-test or cross-describe contamination by
+// globally clearing nock after each test
+afterEach(function () {
+  nock.cleanAll()
+})
 
 describe('method overloads', function (next) {
   najax.defaults({ error: error })
@@ -73,14 +79,6 @@ describe('url', function (next) {
   }
 
   it('should accept plain URL', function (done) {
-    // An extra nock seems to be being
-    // registered and affecting the subsequent tests
-    // (I beleive it is caused by:
-    // https://github.com/najaxjs/najax/commit/54cfac6aa0b7cf8a89efae0f39d1f054c8859de0
-    // commenting out the 'default to "GET"' test also fixes this)
-    // make an extra call to najax in order to clear it
-    najax({url: 'http://www.example.com'})
-
     mockPlain('get')
     najax('http://www.example.com', createSuccess(done))
   })
