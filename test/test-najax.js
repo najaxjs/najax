@@ -216,7 +216,7 @@ describe('data', function (next) {
   it('should pass correct headers for x-www-form-urlencoded data', function (done) {
     nock('http://www.example.com')
       .post('/', 'a=1')
-      .matchHeader('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8')
+      .matchHeader('Content-Type', 'application/x-www-form-urlencoded')
       .matchHeader('Content-Length', 3)
       .reply(200, 'ok')
 
@@ -226,7 +226,7 @@ describe('data', function (next) {
   it('should support nested urlencoded objects, because you could just content-type=json but yolo', function (done) {
     nock('http://www.example.com')
       .post('/', 'a=1&b%5Bc%5D=1')
-      .matchHeader('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8')
+      .matchHeader('Content-Type', 'application/x-www-form-urlencoded')
       .reply(200, 'ok')
     najax.post('http://www.example.com', { data: { a: 1, b: { c: 1 } } }, createSuccess(done))
   })
@@ -234,7 +234,7 @@ describe('data', function (next) {
   it('should pass correct headers for json data', function (done) {
     nock('http://www.example.com')
       .post('/', data)
-      .matchHeader('Content-Type', 'application/json;charset=utf-8')
+      .matchHeader('Content-Type', 'application/json')
       .matchHeader('Content-Length', 7)
       .reply(200, 'ok')
 
@@ -247,7 +247,7 @@ describe('data', function (next) {
   it('should pass correct headers for xml data', function (done) {
     nock('http://www.example.com')
       .post('/', data)
-      .matchHeader('Content-Type', 'application/xml;charset=utf-8')
+      .matchHeader('Content-Type', 'application/xml')
       .matchHeader('Content-Length', 7)
       .reply(200, 'ok')
 
@@ -262,7 +262,7 @@ describe('data', function (next) {
 
     nock('http://www.example.com')
       .post('/', data)
-      .matchHeader('Content-Type', 'application/xml;charset=utf-8')
+      .matchHeader('Content-Type', 'application/xml')
       .matchHeader('Content-Length', 7)
       .matchHeader('Cookie', cookie)
       .reply(200, 'ok')
@@ -279,7 +279,7 @@ describe('data', function (next) {
   it('should support beforeSend and setRequestHeader', function (done) {
     nock('http://www.example.com')
       .post('/', data)
-      .matchHeader('Content-Type', 'application/xml;charset=utf-8')
+      .matchHeader('Content-Type', 'application/xml')
       .matchHeader('Content-Length', 7)
       .matchHeader('Accepts', 'application/vnd.json+api')
       .reply(200, 'ok')
