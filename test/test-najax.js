@@ -200,6 +200,19 @@ describe('data', function (next) {
     }, createSuccess(done))
   })
 
+  describe('data containing array', function () {
+    var arrayData = {a: [1, 2, 3]}
+    // url encoded: ?a[]=1&a[]=2&a[]=3
+    var encodedArrayData = '?a%5B%5D=1&a%5B%5D=2&a%5B%5D=3'
+
+    it('should encode array with empty bracket syntax', function (done) {
+      nock('http://www.example.com').get('/' + encodedArrayData).reply(200, 'ok')
+      najax.get('http://www.example.com', {
+        data: arrayData
+      }, createSuccess(done))
+    })
+  })
+
   it('should pass correct headers for x-www-form-urlencoded data', function (done) {
     nock('http://www.example.com')
       .post('/', 'a=1')
