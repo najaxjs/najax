@@ -1,8 +1,14 @@
-/* globals describe beforeEach it */
+/* globals describe beforeEach afterEach it */
 var najax = require('../lib/najax.js')
 var expect = require('chai').expect
 var nock = require('nock')
 var zlib = require('zlib')
+
+// prevent cross-test or cross-describe contamination by
+// globally clearing nock after each test
+afterEach(function () {
+  nock.cleanAll()
+})
 
 describe('method overloads', function (next) {
   najax.defaults({ error: error })
@@ -80,6 +86,19 @@ describe('url', function (next) {
   it('should accept url as property of options object', function (done) {
     mockPlain('get')
     najax({ url: 'http://www.example.com' }, createSuccess(done))
+  })
+
+  it('should not fail when result is broken JSON', function (done) {
+    mockPlain('get')
+    najax({url: 'http://www.example.com', dataType: 'json'}, jsonError(done))
+  })
+
+  it('should succeed when result is good JSON', function (done) {
+    nock('http://www.example.com')
+      .get('/')
+      .reply(200, {'test': 'ok'})
+
+    najax({url: 'http://www.example.com', dataType: 'json'}, jsonSuccess(done))
   })
 
   it('should parse auth from the url', function (done) {
@@ -338,6 +357,22 @@ describe('headers', function () {
 function createSuccess (done) {
   return function (data, statusText) {
     expect(data).to.equal('ok')
+    expect(statusText).to.equal('success')
+    done()
+  }
+}
+
+function jsonSuccess (done) {
+  return function (data, statusText) {
+    expect(data.test).to.equal('ok')
+    expect(statusText).to.equal('success')
+    done()
+  }
+}
+
+function jsonError (done) {
+  return function (data, statusText) {
+    expect(data.state).to.equal('parsererror')
     expect(statusText).to.equal('success')
     done()
   }
