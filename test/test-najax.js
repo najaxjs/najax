@@ -384,6 +384,90 @@ describe('defaults', function () {
   })
 })
 
+describe('errors', function () {
+  describe('error response codes', function () {
+    [400, 422, 500, 502].forEach(function (code) {
+      describe('Status code: ' + code, function () {
+        it('should trigger promise fail', function (done) {
+          nock('http://example.com').post('/').reply(code, 'An Error Occurred... Details here')
+
+          najax({url: 'http://example.com', type: 'POST'}).fail(function (jqXHR, statusText, error) {
+            expect(jqXHR.status).to.equal(code)
+            expect(jqXHR.responseText).to.equal('An Error Occurred... Details here')
+
+            expect(statusText).to.equal('error')
+            expect(error).to.be.an('error')
+
+            done()
+          })
+        })
+
+        describe('error callback given', function () {
+          it('should trigger callback', function (done) {
+            nock('http://example.com').post('/').reply(code, 'An Error Occurred... Details here')
+
+            najax({
+              url: 'http://example.com',
+              type: 'POST',
+              error: function (jqXHR, statusText, error) {
+                expect(jqXHR.status).to.equal(code)
+                expect(jqXHR.responseText).to.equal('An Error Occurred... Details here')
+
+                expect(statusText).to.equal('error')
+                expect(error).to.be.an('error')
+
+                done()
+              }
+            })
+          })
+        })
+      })
+    })
+  })
+
+  describe('error parsing json response', function () {
+    var options = {
+      url: 'http://example.com',
+      dataType: 'json',
+      method: 'POST'
+    }
+
+    var response = '<div>Not Json</div>'
+
+    it('should trigger promise fail', function (done) {
+      nock('http://example.com').post('/').reply(200, response)
+
+      najax(options).fail(function (jqXHR, statusText, error) {
+        expect(jqXHR.status).to.equal(200)
+        expect(jqXHR.responseText).to.equal(response)
+
+        expect(statusText).to.equal('parseerror')
+        expect(error).to.be.instanceOf(SyntaxError)
+
+        done()
+      })
+    })
+
+    describe('error callback given', function () {
+      it('should trigger callback', function (done) {
+        nock('http://example.com').post('/').reply(200, response)
+
+        najax(Object.assign({}, options, {
+          error: function (jqXHR, statusText, error) {
+            expect(jqXHR.status).to.equal(200)
+            expect(jqXHR.responseText).to.equal(response)
+
+            expect(statusText).to.equal('parseerror')
+            expect(error).to.be.instanceOf(SyntaxError)
+
+            done()
+          }
+        }))
+      })
+    })
+  })
+})
+
 function createSuccess (done) {
   return function (data, statusText) {
     expect(data).to.equal('ok')
