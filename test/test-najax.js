@@ -348,6 +348,42 @@ describe('headers', function () {
   })
 })
 
+describe('defaults', function () {
+  function mockResponse () {
+    nock('http://www.example.com')
+      .get('/')
+      .reply(function (uri, requestBody) {
+        if (this.req.headers.accessible) {
+          return [200, 'ok', {}]
+        } else {
+          return [401, 'Unauthorized', {}]
+        }
+      })
+  }
+
+  it('should dispose of request headers after each request', function (done) {
+    mockResponse()
+    najax.get('http://www.example.com', {
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader('accessible', 'true')
+      },
+      complete: function (data, statusText, jqXHR) {
+        expect(jqXHR.status).to.equal(200)
+      }
+    })
+
+    mockResponse()
+    najax.get('http://www.example.com', {
+      error: null,
+      complete: function (jqXHR, statusText, error) {
+        expect(jqXHR, 'request should not succeed').to.be.an('object')
+        expect(jqXHR.status).to.equal(401)
+        done()
+      }
+    })
+  })
+})
+
 function createSuccess (done) {
   return function (data, statusText) {
     expect(data).to.equal('ok')
