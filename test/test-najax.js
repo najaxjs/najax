@@ -223,6 +223,18 @@ describe('data', function (next) {
     najax.post('http://www.example.com', { data: data }, createSuccess(done))
   })
 
+  it('should encode data for x-www-form-urlencoded with charset', function (done) {
+    nock('http://www.example.com')
+      .post('/', 'a=1')
+      .matchHeader('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8')
+      .reply(200, 'ok')
+
+    najax.post('http://www.example.com', {
+      data: data,
+      contentType: 'application/x-www-form-urlencoded; charset=utf-8'
+    }, createSuccess(done))
+  })
+
   it('should support nested urlencoded objects, because you could just content-type=json but yolo', function (done) {
     nock('http://www.example.com')
       .post('/', 'a=1&b%5Bc%5D=1')
