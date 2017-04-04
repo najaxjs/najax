@@ -41,6 +41,7 @@
   },
   "keywords": [],
   "dependencies": {
+    "cookie-client": "0.0.3",
     "jquery-deferred": "^0.3.0",
     "lodash.defaultsdeep": "^4.6.0",
     "qs": "^6.2.0"
