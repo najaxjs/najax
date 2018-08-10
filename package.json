@@ -3,7 +3,7 @@
   "description": "jquery ajax-stye http requests in node",
   "version": "1.0.3",
   "homepage": "https://github.com/najaxjs/najax",
-  "author": "Alan Clarke <self@alz.so> (alz.so)",
+  "author": "Alan Clarke <code@alz.io> (alz.io)",
   "contributors": [
     "doublerebel",
     "philschatz",
@@ -29,7 +29,7 @@
     "node": ">= 4.4.3"
   },
   "scripts": {
-    "test": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha && standard"
+    "test": "istanbul cover node_modules/.bin/_mocha && standard"
   },
   "devDependencies": {
     "chai": "^3.4.1",
@@ -46,6 +46,7 @@
     "qs": "^6.2.0"
   },
   "directories": {
+    "lib": "lib",
     "test": "test"
   },
   "license": "MIT"
