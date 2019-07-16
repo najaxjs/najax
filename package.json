@@ -42,7 +42,7 @@
   "keywords": [],
   "dependencies": {
     "jquery-deferred": "^0.3.0",
-    "lodash.defaultsdeep": "^4.6.0",
+    "lodash.defaultsdeep": "^4.6.1",
     "qs": "^6.2.0"
   },
   "directories": {
