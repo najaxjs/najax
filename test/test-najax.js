@@ -385,7 +385,7 @@ describe('timeout', function () {
   it('should timeout', function (done) {
     nock('http://www.example.com')
       .post('/')
-      .socketDelay(1000)
+      .socketDelay(100)
       .reply(200, 'ok')
     var opts = { timeout: 1, error: false }
     najax
@@ -398,7 +398,7 @@ describe('timeout', function () {
   it('should call complete with status when finished', function (done) {
     nock('http://www.example.com')
       .post('/')
-      .socketDelay(1000)
+      .socketDelay(100)
       .reply(200, 'ok')
     var opts = {
       timeout: 1,
