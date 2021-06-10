@@ -50,33 +50,28 @@ describe('url', function (next) {
   najax.defaults({ error: error })
 
   function mockPlain (method) {
-    nock('http://www.example.com')
-      [method]('/')
+    nock('http://www.example.com')[method]('/')
       .reply(200, 'ok')
   }
 
   function mockHttps (method) {
-    nock('https://www.example.com')
-      [method]('/')
+    nock('https://www.example.com')[method]('/')
       .reply(200, 'ok')
   }
 
   function mockAuth (method) {
-    nock('http://www.example.com')
-      [method]('/')
+    nock('http://www.example.com')[method]('/')
       .basicAuth({ user: username, pass: password })
       .reply(200, 'ok')
   }
 
   function mockGzip (method) {
-    nock('http://www.example.com')
-      [method]('/')
+    nock('http://www.example.com')[method]('/')
       .reply(200, zlib.gzipSync('ok'), { 'Content-Encoding': 'gzip' })
   }
 
   function mockDeflate (method) {
-    nock('http://www.example.com')
-      [method]('/')
+    nock('http://www.example.com')[method]('/')
       .reply(200, zlib.deflateSync('ok'), { 'Content-Encoding': 'deflate' })
   }
 
@@ -205,15 +200,13 @@ describe('url', function (next) {
     })
 
     it(M + ' should set port to the port in the URL string', function (done) {
-      nock('http://www.example.com:66')
-        [m]('/')
+      nock('http://www.example.com:66')[m]('/')
         .reply(200, 'ok')
       najax[m]('http://www.example.com:66', createSuccess(done))
     })
 
     it(M + ' should set path to the path in the URL string', function (done) {
-      nock('http://www.example.com:66')
-        [m]('/blah')
+      nock('http://www.example.com:66')[m]('/blah')
         .reply(200, 'ok')
       najax[m]('http://www.example.com:66/blah', createSuccess(done))
     })
