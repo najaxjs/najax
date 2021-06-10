@@ -8,7 +8,9 @@ describe('method overloads', function (next) {
   najax.defaults({ error: error })
 
   beforeEach(function () {
-    nock('http://www.example.com').get('/').reply(200, 'ok')
+    nock('http://www.example.com')
+      .get('/')
+      .reply(200, 'ok')
   })
 
   it('should accept argument order: (url, callback)', function (done) {
@@ -44,31 +46,37 @@ describe('url', function (next) {
   var username = 'user'
   var password = 'test'
   var authString = username + ':' + password
-  var encrypted = (new Buffer(authString)).toString('base64')
 
   najax.defaults({ error: error })
 
   function mockPlain (method) {
-    nock('http://www.example.com')[method]('/').reply(200, 'ok')
+    nock('http://www.example.com')
+      [method]('/')
+      .reply(200, 'ok')
   }
 
   function mockHttps (method) {
-    nock('https://www.example.com')[method]('/').reply(200, 'ok')
+    nock('https://www.example.com')
+      [method]('/')
+      .reply(200, 'ok')
   }
 
   function mockAuth (method) {
-    nock('http://www.example.com')[method]('/')
-      .matchHeader('authorization', 'Basic ' + encrypted)
+    nock('http://www.example.com')
+      [method]('/')
+      .basicAuth({ user: username, pass: password })
       .reply(200, 'ok')
   }
 
   function mockGzip (method) {
-    nock('http://www.example.com')[method]('/')
+    nock('http://www.example.com')
+      [method]('/')
       .reply(200, zlib.gzipSync('ok'), { 'Content-Encoding': 'gzip' })
   }
 
   function mockDeflate (method) {
-    nock('http://www.example.com')[method]('/')
+    nock('http://www.example.com')
+      [method]('/')
       .reply(200, zlib.deflateSync('ok'), { 'Content-Encoding': 'deflate' })
   }
 
@@ -84,21 +92,30 @@ describe('url', function (next) {
 
   it('should parse auth from the url', function (done) {
     mockAuth('get')
-    najax({ url: 'http://' + authString + '@www.example.com' }, createSuccess(done))
+    najax(
+      { url: 'http://' + authString + '@www.example.com' },
+      createSuccess(done)
+    )
   })
 
   it('should accept auth as property of options object', function (done) {
     mockAuth('get')
-    najax({ url: 'http://www.example.com', auth: authString }, createSuccess(done))
+    najax(
+      { url: 'http://www.example.com', auth: authString },
+      createSuccess(done)
+    )
   })
 
   it('should accept username, password as properties of options object', function (done) {
     mockAuth('get')
-    najax({
-      url: 'http://www.example.com',
-      username: username,
-      password: password
-    }, createSuccess(done))
+    najax(
+      {
+        url: 'http://www.example.com',
+        username: username,
+        password: password
+      },
+      createSuccess(done)
+    )
   })
 
   it('should set port to 443 for https URLs', function (done) {
@@ -107,20 +124,25 @@ describe('url', function (next) {
   })
 
   it('should set port to the port in the URL string', function (done) {
-    nock('http://www.example.com:66').get('/').reply(200, 'ok')
+    nock('http://www.example.com:66')
+      .get('/')
+      .reply(200, 'ok')
     najax('http://www.example.com:66', createSuccess(done))
   })
 
   it('should set path to the path in the URL string', function (done) {
-    nock('http://www.example.com:66').get('/blah').reply(200, 'ok')
+    nock('http://www.example.com:66')
+      .get('/blah')
+      .reply(200, 'ok')
     najax('http://www.example.com:66/blah', createSuccess(done))
   })
 
   it('supports legacy jQuery `type` instead of `method`', function (done) {
-    nock('http://www.example.com').post('/').reply(201, 'ok')
-    najax({url: 'http://www.example.com/', type: 'POST'}, createSuccess(done))
+    nock('http://www.example.com')
+      .post('/')
+      .reply(201, 'ok')
+    najax({ url: 'http://www.example.com/', type: 'POST' }, createSuccess(done))
   })
-
   ;['get', 'post', 'put', 'delete'].forEach(function (m) {
     var M = m.toUpperCase()
 
@@ -131,34 +153,51 @@ describe('url', function (next) {
 
     it(M + ' should accept url as property of options object', function (done) {
       mockPlain(m)
-      najax[m]({
-        url: 'http://www.example.com'
-      }, createSuccess(done))
+      najax[m](
+        {
+          url: 'http://www.example.com'
+        },
+        createSuccess(done)
+      )
     })
 
     it(M + ' should parse auth from the url', function (done) {
       mockAuth(m)
-      najax[m]({
-        url: 'http://' + authString + '@www.example.com'
-      }, createSuccess(done))
+      najax[m](
+        {
+          url: 'http://' + authString + '@www.example.com'
+        },
+        createSuccess(done)
+      )
     })
 
-    it(M + ' should accept auth as property of options object', function (done) {
+    it(M + ' should accept auth as property of options object', function (
+      done
+    ) {
       mockAuth(m)
-      najax[m]({
-        url: 'http://www.example.com',
-        auth: authString
-      }, createSuccess(done))
+      najax[m](
+        {
+          url: 'http://www.example.com',
+          auth: authString
+        },
+        createSuccess(done)
+      )
     })
 
-    it(M + ' should accept username, password as properties of options object', function (done) {
-      mockAuth(m)
-      najax[m]({
-        url: 'http://www.example.com',
-        username: username,
-        password: password
-      }, createSuccess(done))
-    })
+    it(
+      M + ' should accept username, password as properties of options object',
+      function (done) {
+        mockAuth(m)
+        najax[m](
+          {
+            url: 'http://www.example.com',
+            username: username,
+            password: password
+          },
+          createSuccess(done)
+        )
+      }
+    )
 
     it(M + ' should set port to 443 for https URLs', function (done) {
       mockHttps(m)
@@ -166,12 +205,16 @@ describe('url', function (next) {
     })
 
     it(M + ' should set port to the port in the URL string', function (done) {
-      nock('http://www.example.com:66')[m]('/').reply(200, 'ok')
+      nock('http://www.example.com:66')
+        [m]('/')
+        .reply(200, 'ok')
       najax[m]('http://www.example.com:66', createSuccess(done))
     })
 
     it(M + ' should set path to the path in the URL string', function (done) {
-      nock('http://www.example.com:66')[m]('/blah').reply(200, 'ok')
+      nock('http://www.example.com:66')
+        [m]('/blah')
+        .reply(200, 'ok')
       najax[m]('http://www.example.com:66/blah', createSuccess(done))
     })
 
@@ -194,22 +237,34 @@ describe('data', function (next) {
   najax.defaults({ error: error })
 
   it('should encode data passed in options object', function (done) {
-    nock('http://www.example.com').get('/' + encodedData).reply(200, 'ok')
-    najax.get('http://www.example.com', {
-      data: data
-    }, createSuccess(done))
+    nock('http://www.example.com')
+      .get('/' + encodedData)
+      .reply(200, 'ok')
+    najax.get(
+      'http://www.example.com',
+      {
+        data: data
+      },
+      createSuccess(done)
+    )
   })
 
   describe('data containing array', function () {
-    var arrayData = {a: [1, 2, 3]}
+    var arrayData = { a: [1, 2, 3] }
     // url encoded: ?a[]=1&a[]=2&a[]=3
     var encodedArrayData = '?a%5B%5D=1&a%5B%5D=2&a%5B%5D=3'
 
     it('should encode array with empty bracket syntax', function (done) {
-      nock('http://www.example.com').get('/' + encodedArrayData).reply(200, 'ok')
-      najax.get('http://www.example.com', {
-        data: arrayData
-      }, createSuccess(done))
+      nock('http://www.example.com')
+        .get('/' + encodedArrayData)
+        .reply(200, 'ok')
+      najax.get(
+        'http://www.example.com',
+        {
+          data: arrayData
+        },
+        createSuccess(done)
+      )
     })
   })
 
@@ -226,13 +281,20 @@ describe('data', function (next) {
   it('should encode data for x-www-form-urlencoded with charset', function (done) {
     nock('http://www.example.com')
       .post('/', 'a=1')
-      .matchHeader('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8')
+      .matchHeader(
+        'Content-Type',
+        'application/x-www-form-urlencoded; charset=utf-8'
+      )
       .reply(200, 'ok')
 
-    najax.post('http://www.example.com', {
-      data: data,
-      contentType: 'application/x-www-form-urlencoded; charset=utf-8'
-    }, createSuccess(done))
+    najax.post(
+      'http://www.example.com',
+      {
+        data: data,
+        contentType: 'application/x-www-form-urlencoded; charset=utf-8'
+      },
+      createSuccess(done)
+    )
   })
 
   it('should support nested urlencoded objects, because you could just content-type=json but yolo', function (done) {
@@ -240,7 +302,11 @@ describe('data', function (next) {
       .post('/', 'a=1&b%5Bc%5D=1')
       .matchHeader('Content-Type', 'application/x-www-form-urlencoded')
       .reply(200, 'ok')
-    najax.post('http://www.example.com', { data: { a: 1, b: { c: 1 } } }, createSuccess(done))
+    najax.post(
+      'http://www.example.com',
+      { data: { a: 1, b: { c: 1 } } },
+      createSuccess(done)
+    )
   })
 
   it('should pass correct headers for json data', function (done) {
@@ -250,10 +316,14 @@ describe('data', function (next) {
       .matchHeader('Content-Length', 7)
       .reply(200, 'ok')
 
-    najax.post('http://www.example.com', {
-      data: data,
-      contentType: 'application/json'
-    }, createSuccess(done))
+    najax.post(
+      'http://www.example.com',
+      {
+        data: data,
+        contentType: 'application/json'
+      },
+      createSuccess(done)
+    )
   })
 
   it('should pass correct headers for xml data', function (done) {
@@ -263,10 +333,14 @@ describe('data', function (next) {
       .matchHeader('Content-Length', 7)
       .reply(200, 'ok')
 
-    najax.post('http://www.example.com', {
-      data: JSON.stringify(data),
-      contentType: 'application/xml'
-    }, createSuccess(done))
+    najax.post(
+      'http://www.example.com',
+      {
+        data: JSON.stringify(data),
+        contentType: 'application/xml'
+      },
+      createSuccess(done)
+    )
   })
 
   it('should pass custom headers (Cookie)', function (done) {
@@ -279,13 +353,17 @@ describe('data', function (next) {
       .matchHeader('Cookie', cookie)
       .reply(200, 'ok')
 
-    najax.post('http://www.example.com', {
-      data: JSON.stringify(data),
-      contentType: 'application/xml',
-      headers: {
-        'Cookie': cookie
-      }
-    }, createSuccess(done))
+    najax.post(
+      'http://www.example.com',
+      {
+        data: JSON.stringify(data),
+        contentType: 'application/xml',
+        headers: {
+          Cookie: cookie
+        }
+      },
+      createSuccess(done)
+    )
   })
 
   it('should support beforeSend and setRequestHeader', function (done) {
@@ -296,13 +374,17 @@ describe('data', function (next) {
       .matchHeader('Accepts', 'application/vnd.json+api')
       .reply(200, 'ok')
 
-    najax.post('http://www.example.com', {
-      data: JSON.stringify(data),
-      contentType: 'application/xml',
-      beforeSend: function (xhr) {
-        xhr.setRequestHeader('Accepts', 'application/vnd.json+api')
-      }
-    }, createSuccess(done))
+    najax.post(
+      'http://www.example.com',
+      {
+        data: JSON.stringify(data),
+        contentType: 'application/xml',
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader('Accepts', 'application/vnd.json+api')
+        }
+      },
+      createSuccess(done)
+    )
   })
 })
 
@@ -313,7 +395,8 @@ describe('timeout', function () {
       .socketDelay(1000)
       .reply(200, 'ok')
     var opts = { timeout: 1, error: false }
-    return najax.post('http://www.example.com', opts)
+    najax
+      .post('http://www.example.com', opts)
       .error(function (data, statusText, e) {
         expect(statusText).to.eql('timeout')
         done()
@@ -324,10 +407,14 @@ describe('timeout', function () {
       .post('/')
       .socketDelay(1000)
       .reply(200, 'ok')
-    var opts = { timeout: 1, error: false, complete: function (jqXHR, statusText) {
-      expect(statusText).to.eql('timeout')
-      done()
-    }}
+    var opts = {
+      timeout: 1,
+      error: false,
+      complete: function (jqXHR, statusText) {
+        expect(statusText).to.eql('timeout')
+        done()
+      }
+    }
     najax.post('http://www.example.com', opts)
   })
 })
@@ -338,21 +425,24 @@ describe('headers', function () {
       .post('/')
       .reply(200, 'ok', {
         'content-type': 'application/json; charset=utf-8',
-        'server': 'Test Server'
+        server: 'Test Server'
       })
   })
 
   it('should return the concatenated headers from getAllResponseHeaders', function (done) {
-    najax.post('http://www.example.com')
+    najax
+      .post('http://www.example.com')
       .then(function (data, statusText, jqXHR) {
-        expect(jqXHR.getAllResponseHeaders())
-          .to.equal('content-type: application/json; charset=utf-8\nserver: Test Server')
+        expect(jqXHR.getAllResponseHeaders()).to.equal(
+          'content-type: application/json; charset=utf-8\nserver: Test Server'
+        )
         done()
       })
   })
 
   it('should return the value for the header passed to getResponseHeader', function (done) {
-    najax.post('http://www.example.com')
+    najax
+      .post('http://www.example.com')
       .then(function (data, statusText, jqXHR) {
         expect(jqXHR.getResponseHeader('server')).to.equal('Test Server')
         done()
@@ -398,18 +488,22 @@ describe('defaults', function () {
 
 describe('errors', function () {
   describe('error response codes', function () {
-    [400, 422, 500, 502].forEach(function (code) {
+    ;[400, 422, 500, 502].forEach(function (code) {
       describe('Status code: ' + code, function () {
         describe('error callback given', function () {
           it('should trigger callback', function (done) {
-            nock('http://example.com').post('/').reply(code, 'An Error Occurred... Details here')
+            nock('http://example.com')
+              .post('/')
+              .reply(code, 'An Error Occurred... Details here')
 
             najax({
               url: 'http://example.com',
               type: 'POST',
               error: function (jqXHR, statusText, error) {
                 expect(jqXHR.status).to.equal(code)
-                expect(jqXHR.responseText).to.equal('An Error Occurred... Details here')
+                expect(jqXHR.responseText).to.equal(
+                  'An Error Occurred... Details here'
+                )
 
                 expect(statusText).to.equal('error')
                 expect(error).to.be.an('error')
@@ -434,19 +528,23 @@ describe('errors', function () {
 
     describe('error callback given', function () {
       it('should trigger callback', function (done) {
-        nock('http://example.com').post('/').reply(200, response)
+        nock('http://example.com')
+          .post('/')
+          .reply(200, response)
 
-        najax(Object.assign({}, options, {
-          error: function (jqXHR, statusText, error) {
-            expect(jqXHR.status).to.equal(200)
-            expect(jqXHR.responseText).to.equal(response)
+        najax(
+          Object.assign({}, options, {
+            error: function (jqXHR, statusText, error) {
+              expect(jqXHR.status).to.equal(200)
+              expect(jqXHR.responseText).to.equal(response)
 
-            expect(statusText).to.equal('parseerror')
-            expect(error).to.be.instanceOf(SyntaxError)
+              expect(statusText).to.equal('parseerror')
+              expect(error).to.be.instanceOf(SyntaxError)
 
-            done()
-          }
-        }))
+              done()
+            }
+          })
+        )
       })
     })
   })
