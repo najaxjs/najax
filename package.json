@@ -26,17 +26,17 @@
   ],
   "main": "lib/najax",
   "engines": {
-    "node": ">= 4.4.3"
+    "node": ">= 6.0.0"
   },
   "scripts": {
-    "test": "istanbul cover node_modules/.bin/_mocha && standard"
+    "test": "istanbul cover mocha && standard"
   },
   "devDependencies": {
     "chai": "^3.4.1",
     "getport": "^0.1.0",
     "istanbul": "^0.4.1",
     "mocha": "^6.0.0",
-    "nock": "^12.0.0",
+    "nock": "^10.0.0",
     "standard": "^11.0.0"
   },
   "keywords": [],
