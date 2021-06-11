@@ -379,6 +379,21 @@ describe('data', function (next) {
       createSuccess(done)
     )
   })
+
+  it('should parse the response as json if the response content-type is application/json', function(done) {
+    nock('http://www.example.com')
+      .get('/')
+      .reply(200, {some: 'json'}, {
+        'Content-Type': 'application/json; charset=utf-8'
+      })
+
+    najax.get('http://www.example.com', function (data, statusText) {
+      expect(data.some).to.equal('json')
+      expect(statusText).to.equal('success')
+      done()
+    })
+
+  })
 })
 
 describe('timeout', function () {
